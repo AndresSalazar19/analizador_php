@@ -40,9 +40,6 @@ reserved_andres = {
     'private': 'PRIVATE',
     'protected': 'PROTECTED',
     'static': 'STATIC',
-    'true': 'TRUE',
-    'false': 'FALSE',
-    'null': 'NULL',
     'echo': 'ECHO',
     'array': 'ARRAY',
     'define': 'DEFINE',
@@ -74,9 +71,6 @@ tokens_andres = [
     'RBRACKET',          # ]
     'COMMA',             # ,
     'ASSIGN',            # =
-    'INTEGER',           # 123
-    'FLOAT',             # 123.45
-    'STRING',            # "texto" o 'texto'
     'PHP_OPEN',          # <?php
     'PHP_CLOSE',         # ?>
     'DOT',               # . (concatenación)
@@ -86,12 +80,35 @@ tokens_andres = [
     'DECREMENT',         # --
 ]
 
+# ============================================================
+# APORTE: Yadira Suarez (YadiSuarez)
+# Componentes: 
+# - Variables superglobales ($GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV)
+# - Tipos de datos primitivos (INTEGER, FLOAT, STRING, NULL, BOOL)
+# - Operadores lógicos (AND, OR, NOT, XOR) 
+# - Commentarios (//, #, /* */)
+# ============================================================
+
+tokens_yadira = [
+    'SUPERGLOBALS',  # $GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV
+    'INTEGER',           # 123
+    'FLOAT',             # 123.45
+    'STRING',            # "texto" o 'texto'
+    'NULL',              # null
+    'BOOL',              # true o false
+
+    # Operadores lógicos
+    'AND_OP',             # && or 'and'
+    'OR_OP',              # || or 'or'
+    'NOT_OP',             # '!' or 'not'    
+    'XOR_OP',             # 'xor'                # Identificadores
+]
 
 # Combinar todas las palabras reservadas
 reserved = {**reserved_andres}
 
 # Combinar todos los tokens
-tokens = tokens_andres + list(reserved.values())
+tokens = tokens_andres + tokens_yadira + list(reserved.values())
 
 # ============================================================
 # REGLAS DE TOKENS
@@ -143,15 +160,46 @@ t_COLON = r':'
 t_DOT = r'\.'
 t_ASSIGN = r'='
 
+# Primero verificar superglobales
+def t_SUPERGLOBALS(t):
+    r'\$(GLOBALS|_GET|_POST|_SESSION|_COOKIE|_SERVER|_FILES|_REQUEST|_ENV)'
+    t.value = t.value[1:]  # quita el símbolo $
+    return t
+
 # Variables estándar de PHP
 def t_VARIABLE(t):
     r'\$[a-zA-Z_][a-zA-Z0-9_]*'
+    return t
+
+def t_AND_OP(t):
+    r'&&|\band\b'
+    return t
+
+def t_OR_OP(t):
+    r'\|\||\bor\b'
+    return t
+
+def t_NOT_OP(t):
+    r'!|\bnot\b'
+    return t
+
+def t_XOR_OP(t):
+    r'\bxor\b'
+    return t
+
+def t_BOOL(t):
+    r'\b(true|false)\b'
+    t.value = True if t.value.lower() == 'true' else False
     return t
 
 # Identificadores (para palabras reservadas)
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value.lower(), 'ID')  # Verificar si es palabra reservada
+    if t.type == 'BOOL':
+        t.value = True if t.value.lower() == 'true' else False
+    elif t.type == 'NULL':
+        t.value = None
     return t
 
 # Números de punto flotante (va antes que INTEGER)
@@ -180,6 +228,16 @@ def t_STRING_SINGLE(t):
     t.value = t.value[1:-1]  # Remover comillas
     return t
 
+# Comentarios multilínea
+def t_COMMENT_MULTI(t):
+    r'/\*([^*]|\*(?!/))*\*/'
+    pass # Ignorar
+
+# Comentarios de línea
+def t_COMMENT_LINE(t):
+    r'(//|\#)[^\n]*'
+    # Ignorar comentarios de línea
+    pass
 
 # Seguimiento de líneas
 def t_newline(t):
@@ -190,21 +248,23 @@ def t_newline(t):
 t_ignore = ' \t'
 
 # Manejo de errores
+errores = []
 def t_error(t):
+    mensaje = "Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'"
     print(f"Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'")
+    errores.append(mensaje)
     t.lexer.skip(1)
 
 # ============================================================
 # CONSTRUCCIÓN DEL LEXER
 # ============================================================
-
 lexer = lex.lex()
 
 # ============================================================
 # FUNCIÓN PARA GENERAR LOGS
 # ============================================================
 
-def generar_log(codigo, tokens_encontrados, errores, usuario_git):
+def generar_log(codigo, integrante, tokens_encontrados, errores, usuario_git):
     if not os.path.exists('logs'):
         os.makedirs('logs')
     
@@ -215,7 +275,7 @@ def generar_log(codigo, tokens_encontrados, errores, usuario_git):
     with open(ruta_log, 'w', encoding='utf-8') as f:
         f.write("=" * 80 + "\n")
         f.write("ANÁLISIS LÉXICO - PHP\n")
-        f.write(f"Integrante: Andrés Salazar\n")
+        f.write(f"Integrante: {integrante}\n")
         f.write(f"Usuario GitHub: {usuario_git}\n")
         f.write(f"Fecha y Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
         f.write("=" * 80 + "\n\n")
@@ -256,11 +316,11 @@ def generar_log(codigo, tokens_encontrados, errores, usuario_git):
 # FUNCIÓN PRINCIPAL DE ANÁLISIS
 # ============================================================
 
-def analizar_archivo(ruta_archivo, usuario_git='AndresSazalar19'):
+def analizar_archivo(ruta_archivo, integrante, usuario_git='AndresSazalar19'):
 
     print("\n" + "=" * 80)
     print(f"ANALIZADOR LÉXICO - PHP")
-    print(f"Integrante: Andrés Salazar")
+    print(f"Integrante: {integrante}")
     print(f"Archivo: {ruta_archivo}")
     print(f"Usuario: {usuario_git}")
     print("=" * 80 + "\n")
@@ -280,7 +340,6 @@ def analizar_archivo(ruta_archivo, usuario_git='AndresSazalar19'):
     lexer_local = lex.lex() 
     lexer_local.input(codigo)
     tokens_encontrados = []
-    errores = []
     
     print("Procesando tokens...\n")
     print(f"{'TIPO':<20} {'VALOR':<35} {'LÍNEA':<10}")
@@ -308,7 +367,7 @@ def analizar_archivo(ruta_archivo, usuario_git='AndresSazalar19'):
     print(f"Total de errores léxicos: {len(errores)}")
     
     # Generar log
-    nombre_log = generar_log(codigo, tokens_encontrados, errores, usuario_git)
+    nombre_log = generar_log(codigo, integrante, tokens_encontrados, errores, usuario_git)
     print(f"\n✓ Log generado exitosamente: logs/{nombre_log}")
     print("=" * 80 + "\n")
     
@@ -320,12 +379,30 @@ def analizar_archivo(ruta_archivo, usuario_git='AndresSazalar19'):
 # ============================================================
 
 if __name__ == '__main__':
-    
-    archivo = 'tests/algoritmo_andres.php'
-    usuario = 'AndresSazalar19'
+    usuarios_info = [
+        ('tests/algoritmo_andres.php', 'Andrés Salazar', 'AndresSalazar19'),
+        ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez')
+    ]
+
+    if len(sys.argv) > 1:
+        archivo = sys.argv[1]
+        archivo = 'tests/' + archivo if not archivo.startswith('tests/') else archivo
+        # Determinar el usuario según el nombre del archivo
+        if 'andres' in archivo.lower():
+            nombre = 'Andrés Salazar'
+            usuario = 'AndresSalazar19'
+        elif 'yadira' in archivo.lower():
+            nombre = 'Yadira Suárez'
+            usuario = 'YadiSuarez'
+        else:
+            nombre = 'Desconocido'
+            usuario = 'UsuarioGit'
+    else:
+        # Si no se pasa argumento, usar el primero por defecto
+        archivo, nombre, usuario = usuarios_info[0]
         
     print("Ejecutando análisis con archivo")
     print(f"   Archivo: {archivo}")
     print(f"   Usuario: {usuario}\n")
 
-    analizar_archivo(archivo, usuario)
+    analizar_archivo(archivo, nombre, usuario)
