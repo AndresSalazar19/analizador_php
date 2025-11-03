@@ -126,6 +126,7 @@ tokens_zahid = [
     'TIMES_ASSIGN',
     'DIVIDE_ASSIGN',
     'CONCAT_ASSIGN',
+    'BACKSLASH',
 ]
 
 # ============================================================
@@ -142,6 +143,7 @@ t_MINUS_ASSIGN = r'-='
 t_TIMES_ASSIGN = r'\*='
 t_DIVIDE_ASSIGN = r'/='
 t_CONCAT_ASSIGN = r'\.='
+t_BACKSLASH = r'\\'
 t_OBJECT_OP = r'->'
 
 # ============================================================
@@ -446,8 +448,9 @@ def analizar_archivo(ruta_archivo, integrante, usuario_git='LockHurb'):
 
 if __name__ == '__main__':
     usuarios_info = [
-        ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb'),
-        ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez')
+        ('tests/algoritmo_andres.php', 'Andrés Salazar', 'AndresSalazar19'),
+        ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez'),
+        ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb')
     ]
 
     if len(sys.argv) > 1:
