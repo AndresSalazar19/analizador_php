@@ -86,3 +86,110 @@ tokens_andres = [
     'DECREMENT',         # --
 ]
 
+
+# Combinar todas las palabras reservadas
+reserved = {**reserved_andres}
+
+# Combinar todos los tokens
+tokens = tokens_andres + list(reserved.values())
+
+# ============================================================
+# REGLAS DE TOKENS
+# ============================================================
+
+# Etiquetas PHP
+def t_PHP_OPEN(t):
+    r'<\?php'
+    return t
+
+def t_PHP_CLOSE(t):
+    r'\?>'
+    return t
+
+# Operadores de incremento/decremento (antes que PLUS y MINUS)
+t_INCREMENT = r'\+\+'
+t_DECREMENT = r'--'
+
+# Operadores aritméticos
+t_PLUS = r'\+'
+t_MINUS = r'-'
+t_TIMES = r'\*'
+t_DIVIDE = r'/'
+t_MOD = r'%'
+t_POW = r'\*\*'
+
+# Operadores de comparación (orden importante: === antes que ==)
+t_IDENTICAL = r'==='
+t_EQ = r'=='
+t_NE = r'!='
+t_LE = r'<='
+t_GE = r'>='
+t_LT = r'<'
+t_GT = r'>'
+
+# Flecha para arrays asociativos
+t_ARROW = r'=>'
+
+# Delimitadores básicos
+t_SEMICOLON = r';'
+t_LBRACE = r'\{'
+t_RBRACE = r'\}'
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
+t_COMMA = r','
+t_COLON = r':'
+t_DOT = r'\.'
+t_ASSIGN = r'='
+
+# Variables estándar de PHP
+def t_VARIABLE(t):
+    r'\$[a-zA-Z_][a-zA-Z0-9_]*'
+    return t
+
+# Identificadores (para palabras reservadas)
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t.type = reserved.get(t.value.lower(), 'ID')  # Verificar si es palabra reservada
+    return t
+
+# Números de punto flotante (va antes que INTEGER)
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
+
+# Números enteros
+def t_INTEGER(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+# Cadenas con comillas dobles
+def t_STRING_DOUBLE(t):
+    r'"([^"\\]|\\.)*"'
+    t.type = 'STRING'
+    t.value = t.value[1:-1]  # Remover comillas
+    return t
+
+# Cadenas con comillas simples
+def t_STRING_SINGLE(t):
+    r"'([^'\\]|\\.)*'"
+    t.type = 'STRING'
+    t.value = t.value[1:-1]  # Remover comillas
+    return t
+
+
+# Seguimiento de líneas
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
+# Caracteres ignorados (espacios y tabulaciones)
+t_ignore = ' \t'
+
+# Manejo de errores
+def t_error(t):
+    print(f"Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'")
+    t.lexer.skip(1)
