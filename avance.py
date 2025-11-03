@@ -471,7 +471,7 @@ if __name__ == '__main__':
             usuario = 'UsuarioGit'
     else:
         # Si no se pasa argumento, usar el primero por defecto
-        archivo, nombre, usuario = usuarios_info[0]
+        archivo, nombre, usuario = usuarios_info[2]
         
     print("Ejecutando análisis con archivo")
     print(f"   Archivo: {archivo}")

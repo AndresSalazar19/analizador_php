@@ -1,0 +1,388 @@
+================================================================================
+ANÁLISIS LÉXICO - PHP
+Integrante: Zahid Díaz
+Usuario GitHub: LockHurb
+Fecha y Hora: 03/11/2025 18:29:34
+================================================================================
+
+CÓDIGO ANALIZADO:
+--------------------------------------------------------------------------------
+<?php
+//Variables normales
+$nombre = "Zahid";
+$edad = 25;
+$activo = true;
+$precio = 100.50;
+
+//Variables de instancia
+class Producto {
+    private $nombre;
+    private $precio;
+    
+    public function __construct($n, $p) {
+        $this->nombre = $n;
+        $this->precio = $p;
+    }
+    
+    public function actualizar($n) {
+        $this->nombre = $n;
+    }
+}
+
+//Operadores de asignación compuesta
+$total = 100;
+$total += 50;        //PLUS_ASSIGN
+$total -= 20;        //MINUS_ASSIGN
+$total *= 2;         //TIMES_ASSIGN
+$total /= 4;         //DIVIDE_ASSIGN
+
+$mensaje = "Hola";
+$mensaje .= " Mundo"; //CONCAT_ASSIGN
+
+//Operador de objeto
+$producto = new Producto("Laptop", 1200);
+$producto->actualizar("PC");
+
+//Herencia y punteros
+interface Vendible {
+    public function vender();
+}
+
+abstract class Item {
+    abstract public function obtener();
+}
+
+class Articulo extends Item implements Vendible {
+    public function vender() {
+        return true;
+    }
+    
+    public function obtener() {
+        return "Articulo";
+    }
+}
+
+//Modificadores
+final class Config {
+    const VERSION = "1.0";
+}
+
+//Trait - Use
+trait Logger {
+    public function log($msg) {
+        echo $msg;
+    }
+}
+
+class Usuario {
+    use Logger;
+}
+
+//Namespace
+namespace App\Models;
+
+use App\Utils\Helper as H;
+
+//Uso de instanceof
+$art = new Articulo();
+if ($art instanceof Vendible) {
+    $art->vender();
+}
+
+//Excepciones
+try {
+    if ($total < 0) {
+        throw new Exception("Error");
+    }
+} catch (Exception $e) {
+    echo $e;
+} finally {
+    $total = 0;
+}
+
+//Modularidad
+require 'config.php';
+include 'helpers.php';
+require_once 'database.php';
+include_once 'functions.php';
+
+?>
+--------------------------------------------------------------------------------
+
+TOKENS RECONOCIDOS: 267
+--------------------------------------------------------------------------------
+#     TIPO                 VALOR                          LÍNEA     
+--------------------------------------------------------------------------------
+1     PHP_OPEN             <?php                          1         
+2     VARIABLE             $nombre                        3         
+3     ASSIGN               =                              3         
+4     STRING               Zahid                          3         
+5     SEMICOLON            ;                              3         
+6     VARIABLE             $edad                          4         
+7     ASSIGN               =                              4         
+8     INTEGER              25                             4         
+9     SEMICOLON            ;                              4         
+10    VARIABLE             $activo                        5         
+11    ASSIGN               =                              5         
+12    BOOL                 True                           5         
+13    SEMICOLON            ;                              5         
+14    VARIABLE             $precio                        6         
+15    ASSIGN               =                              6         
+16    FLOAT                100.5                          6         
+17    SEMICOLON            ;                              6         
+18    CLASS                class                          9         
+19    ID                   Producto                       9         
+20    LBRACE               {                              9         
+21    PRIVATE              private                        10        
+22    VARIABLE             $nombre                        10        
+23    SEMICOLON            ;                              10        
+24    PRIVATE              private                        11        
+25    VARIABLE             $precio                        11        
+26    SEMICOLON            ;                              11        
+27    PUBLIC               public                         13        
+28    FUNCTION             function                       13        
+29    ID                   __construct                    13        
+30    LPAREN               (                              13        
+31    VARIABLE             $n                             13        
+32    COMMA                ,                              13        
+33    VARIABLE             $p                             13        
+34    RPAREN               )                              13        
+35    LBRACE               {                              13        
+36    THIS_VAR             $this->nombre                  14        
+37    ASSIGN               =                              14        
+38    VARIABLE             $n                             14        
+39    SEMICOLON            ;                              14        
+40    THIS_VAR             $this->precio                  15        
+41    ASSIGN               =                              15        
+42    VARIABLE             $p                             15        
+43    SEMICOLON            ;                              15        
+44    RBRACE               }                              16        
+45    PUBLIC               public                         18        
+46    FUNCTION             function                       18        
+47    ID                   actualizar                     18        
+48    LPAREN               (                              18        
+49    VARIABLE             $n                             18        
+50    RPAREN               )                              18        
+51    LBRACE               {                              18        
+52    THIS_VAR             $this->nombre                  19        
+53    ASSIGN               =                              19        
+54    VARIABLE             $n                             19        
+55    SEMICOLON            ;                              19        
+56    RBRACE               }                              20        
+57    RBRACE               }                              21        
+58    VARIABLE             $total                         24        
+59    ASSIGN               =                              24        
+60    INTEGER              100                            24        
+61    SEMICOLON            ;                              24        
+62    VARIABLE             $total                         25        
+63    PLUS_ASSIGN          +=                             25        
+64    INTEGER              50                             25        
+65    SEMICOLON            ;                              25        
+66    VARIABLE             $total                         26        
+67    MINUS_ASSIGN         -=                             26        
+68    INTEGER              20                             26        
+69    SEMICOLON            ;                              26        
+70    VARIABLE             $total                         27        
+71    TIMES_ASSIGN         *=                             27        
+72    INTEGER              2                              27        
+73    SEMICOLON            ;                              27        
+74    VARIABLE             $total                         28        
+75    DIVIDE_ASSIGN        /=                             28        
+76    INTEGER              4                              28        
+77    SEMICOLON            ;                              28        
+78    VARIABLE             $mensaje                       30        
+79    ASSIGN               =                              30        
+80    STRING               Hola                           30        
+81    SEMICOLON            ;                              30        
+82    VARIABLE             $mensaje                       31        
+83    CONCAT_ASSIGN        .=                             31        
+84    STRING                Mundo                         31        
+85    SEMICOLON            ;                              31        
+86    VARIABLE             $producto                      34        
+87    ASSIGN               =                              34        
+88    NEW                  new                            34        
+89    ID                   Producto                       34        
+90    LPAREN               (                              34        
+91    STRING               Laptop                         34        
+92    COMMA                ,                              34        
+93    INTEGER              1200                           34        
+94    RPAREN               )                              34        
+95    SEMICOLON            ;                              34        
+96    VARIABLE             $producto                      35        
+97    OBJECT_OP            ->                             35        
+98    ID                   actualizar                     35        
+99    LPAREN               (                              35        
+100   STRING               PC                             35        
+101   RPAREN               )                              35        
+102   SEMICOLON            ;                              35        
+103   INTERFACE            interface                      38        
+104   ID                   Vendible                       38        
+105   LBRACE               {                              38        
+106   PUBLIC               public                         39        
+107   FUNCTION             function                       39        
+108   ID                   vender                         39        
+109   LPAREN               (                              39        
+110   RPAREN               )                              39        
+111   SEMICOLON            ;                              39        
+112   RBRACE               }                              40        
+113   ABSTRACT             abstract                       42        
+114   CLASS                class                          42        
+115   ID                   Item                           42        
+116   LBRACE               {                              42        
+117   ABSTRACT             abstract                       43        
+118   PUBLIC               public                         43        
+119   FUNCTION             function                       43        
+120   ID                   obtener                        43        
+121   LPAREN               (                              43        
+122   RPAREN               )                              43        
+123   SEMICOLON            ;                              43        
+124   RBRACE               }                              44        
+125   CLASS                class                          46        
+126   ID                   Articulo                       46        
+127   EXTENDS              extends                        46        
+128   ID                   Item                           46        
+129   IMPLEMENTS           implements                     46        
+130   ID                   Vendible                       46        
+131   LBRACE               {                              46        
+132   PUBLIC               public                         47        
+133   FUNCTION             function                       47        
+134   ID                   vender                         47        
+135   LPAREN               (                              47        
+136   RPAREN               )                              47        
+137   LBRACE               {                              47        
+138   RETURN               return                         48        
+139   BOOL                 True                           48        
+140   SEMICOLON            ;                              48        
+141   RBRACE               }                              49        
+142   PUBLIC               public                         51        
+143   FUNCTION             function                       51        
+144   ID                   obtener                        51        
+145   LPAREN               (                              51        
+146   RPAREN               )                              51        
+147   LBRACE               {                              51        
+148   RETURN               return                         52        
+149   STRING               Articulo                       52        
+150   SEMICOLON            ;                              52        
+151   RBRACE               }                              53        
+152   RBRACE               }                              54        
+153   FINAL                final                          57        
+154   CLASS                class                          57        
+155   ID                   Config                         57        
+156   LBRACE               {                              57        
+157   CONST                const                          58        
+158   ID                   VERSION                        58        
+159   ASSIGN               =                              58        
+160   STRING               1.0                            58        
+161   SEMICOLON            ;                              58        
+162   RBRACE               }                              59        
+163   TRAIT                trait                          62        
+164   ID                   Logger                         62        
+165   LBRACE               {                              62        
+166   PUBLIC               public                         63        
+167   FUNCTION             function                       63        
+168   ID                   log                            63        
+169   LPAREN               (                              63        
+170   VARIABLE             $msg                           63        
+171   RPAREN               )                              63        
+172   LBRACE               {                              63        
+173   ECHO                 echo                           64        
+174   VARIABLE             $msg                           64        
+175   SEMICOLON            ;                              64        
+176   RBRACE               }                              65        
+177   RBRACE               }                              66        
+178   CLASS                class                          68        
+179   ID                   Usuario                        68        
+180   LBRACE               {                              68        
+181   USE                  use                            69        
+182   ID                   Logger                         69        
+183   SEMICOLON            ;                              69        
+184   RBRACE               }                              70        
+185   NAMESPACE            namespace                      73        
+186   ID                   App                            73        
+187   BACKSLASH            \                              73        
+188   ID                   Models                         73        
+189   SEMICOLON            ;                              73        
+190   USE                  use                            75        
+191   ID                   App                            75        
+192   BACKSLASH            \                              75        
+193   ID                   Utils                          75        
+194   BACKSLASH            \                              75        
+195   ID                   Helper                         75        
+196   AS                   as                             75        
+197   ID                   H                              75        
+198   SEMICOLON            ;                              75        
+199   VARIABLE             $art                           78        
+200   ASSIGN               =                              78        
+201   NEW                  new                            78        
+202   ID                   Articulo                       78        
+203   LPAREN               (                              78        
+204   RPAREN               )                              78        
+205   SEMICOLON            ;                              78        
+206   IF                   if                             79        
+207   LPAREN               (                              79        
+208   VARIABLE             $art                           79        
+209   INSTANCEOF           instanceof                     79        
+210   ID                   Vendible                       79        
+211   RPAREN               )                              79        
+212   LBRACE               {                              79        
+213   VARIABLE             $art                           80        
+214   OBJECT_OP            ->                             80        
+215   ID                   vender                         80        
+216   LPAREN               (                              80        
+217   RPAREN               )                              80        
+218   SEMICOLON            ;                              80        
+219   RBRACE               }                              81        
+220   TRY                  try                            84        
+221   LBRACE               {                              84        
+222   IF                   if                             85        
+223   LPAREN               (                              85        
+224   VARIABLE             $total                         85        
+225   LT                   <                              85        
+226   INTEGER              0                              85        
+227   RPAREN               )                              85        
+228   LBRACE               {                              85        
+229   THROW                throw                          86        
+230   NEW                  new                            86        
+231   ID                   Exception                      86        
+232   LPAREN               (                              86        
+233   STRING               Error                          86        
+234   RPAREN               )                              86        
+235   SEMICOLON            ;                              86        
+236   RBRACE               }                              87        
+237   RBRACE               }                              88        
+238   CATCH                catch                          88        
+239   LPAREN               (                              88        
+240   ID                   Exception                      88        
+241   VARIABLE             $e                             88        
+242   RPAREN               )                              88        
+243   LBRACE               {                              88        
+244   ECHO                 echo                           89        
+245   VARIABLE             $e                             89        
+246   SEMICOLON            ;                              89        
+247   RBRACE               }                              90        
+248   FINALLY              finally                        90        
+249   LBRACE               {                              90        
+250   VARIABLE             $total                         91        
+251   ASSIGN               =                              91        
+252   INTEGER              0                              91        
+253   SEMICOLON            ;                              91        
+254   RBRACE               }                              92        
+255   REQUIRE              require                        95        
+256   STRING               config.php                     95        
+257   SEMICOLON            ;                              95        
+258   INCLUDE              include                        96        
+259   STRING               helpers.php                    96        
+260   SEMICOLON            ;                              96        
+261   REQUIRE_ONCE         require_once                   97        
+262   STRING               database.php                   97        
+263   SEMICOLON            ;                              97        
+264   INCLUDE_ONCE         include_once                   98        
+265   STRING               functions.php                  98        
+266   SEMICOLON            ;                              98        
+267   PHP_CLOSE            ?>                             100       
+
+================================================================================
+✓ ANÁLISIS COMPLETADO SIN ERRORES LÉXICOS
+================================================================================
+FIN DEL ANÁLISIS
+================================================================================
