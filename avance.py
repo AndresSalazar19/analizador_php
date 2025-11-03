@@ -80,6 +80,15 @@ tokens_andres = [
     'DECREMENT',         # --
 ]
 
+# ============================================================
+# APORTE: Yadira Suarez (YadiSuarez)
+# Componentes: 
+# - Variables superglobales ($GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV)
+# - Tipos de datos primitivos (INTEGER, FLOAT, STRING, NULL, BOOL)
+# - Operadores lógicos (AND, OR, NOT, XOR) 
+# - Commentarios (//, #, /* */)
+# ============================================================
+
 tokens_yadira = [
     'SUPERGLOBALS',  # $GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV
     'INTEGER',           # 123
