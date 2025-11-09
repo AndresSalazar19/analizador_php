@@ -1,0 +1,499 @@
+================================================================================
+ANÁLISIS LÉXICO - PHP
+Integrante: Yadira Suárez
+Usuario GitHub: YadiSuarez
+Fecha y Hora: 08/11/2025 16:10:51
+================================================================================
+
+CÓDIGO ANALIZADO:
+--------------------------------------------------------------------------------
+<?php
+// Variables normales y primitivas
+$bool_true = true;
+$bool_false = false;
+$var_null = null;
+$decimal = 3.42;
+$entero = 42;
+$negativo = -12;
+$grande = 99999;
+$cadena_doble = "Hola, PHP!";
+$cadena_simple = 'Esto es una cadena simple';
+$cadena_mixta = "Texto con 'comillas simples' dentro";
+$cadena_escapada = "Salto de línea\n y tabulación\t";
+$cadena_vacia = "";
+$texto1 = "Texto con variables: $entero, $decimal, $bool_true";
+$texto2 = 'Texto estático sin variables: $entero y $decimal';
+$texto3 = "Líneas múltiples
+pueden ser concatenadas
+sin problema";
+
+echo $texto5;
+
+echo $cadena_doble;
+echo "Valor entero: $entero\n";
+echo 'Valor decimal: ' . $decimal . "\n";
+
+// Superglobales
+$_POST['username'] = "admin";
+$_POST['clave'] = "1234";
+$_SESSION['id'] = 123;
+$_GET['action'] = 'login';
+$_COOKIE['session'] = 'abcd';
+$_SERVER['REQUEST_METHOD'] = 'POST';
+$_FILES['file'] = null;
+$_REQUEST['q'] = 'buscar';
+$_ENV['PATH'] = '/usr/bin';
+$GLOBALS['globalVar'] = 100;
+
+echo $_POST['usuario'];
+echo $_GET['accion'];
+
+
+// Operadores lógicos
+$logico1 = $_GET && false || !true xor true;
+$logico2 = $_POST or $bool_true and !$bool_false;
+$logico3 = true && false;
+$logico4 = $bool_true and !$bool_false;
+$logico5 = $bool_false or $bool_true;
+$logico6 = $bool_true xor $bool_false;
+$logico7 =  !($logico1 || $logico2) && $logico3;
+
+// Comentarios
+/* Comentario multilínea simple
+   que debería ser ignorado por el lexer */
+/** Comentario multilínea con asteriscos **/
+/* Comentario multilínea anidado /* aún ignorado */ 
+
+// Comentarios de línea
+// Este es un comentario de línea
+# Otro comentario de línea
+
+if ($logico5) {
+    echo "Expresión lógica verdadera\n";
+} else {
+    echo "Expresión lógica falsa\n";
+}
+
+if ($_GET && $_POST && $_SESSION) {
+    echo "Se detectaron varias superglobales\n";
+}
+
+if ($_FILES || $_REQUEST) {
+    echo "Archivos o peticiones detectadas\n";
+}
+
+if (!$_ENV) {
+    echo "Variable de entorno vacía o no definida\n";
+}
+
+if ($logico7) {
+    echo "La condición final se cumple\n";
+} else {
+    echo "Condición no cumplida\n";
+}
+
+// Mezclando operadores lógicos con superglobales
+$verificar = isset($_POST['usuario']) && $_SERVER['REQUEST_METHOD'] == "POST" || !$bool_false;
+$comparar = $_COOKIE['tema'] == "oscuro" xor $_GET['accion'] == "iniciar";
+
+// Combinación de tipos y operadores lógicos
+$ejemplo1 = $_POST && $_SESSION || $_GET;
+$ejemplo2 = $bool_true && ($_POST['usuario'] or $_POST['clave']);
+$ejemplo3 = !$bool_false && ($_ENV['PATH'] != null);
+$ejemplo4 = $_COOKIE && $_FILES && $bool_true;
+$ejemplo5 = ($_REQUEST or $_SERVER) and !$bool_false;
+
+echo "Fin de análisis del algoritmo de Yadira";
+?>
+
+--------------------------------------------------------------------------------
+
+TOKENS RECONOCIDOS: 378
+--------------------------------------------------------------------------------
+#     TIPO                 VALOR                          LÍNEA     
+--------------------------------------------------------------------------------
+1     PHP_OPEN             <?php                          1         
+2     VARIABLE             $bool_true                     3         
+3     ASSIGN               =                              3         
+4     BOOL                 True                           3         
+5     SEMICOLON            ;                              3         
+6     VARIABLE             $bool_false                    4         
+7     ASSIGN               =                              4         
+8     BOOL                 False                          4         
+9     SEMICOLON            ;                              4         
+10    VARIABLE             $var_null                      5         
+11    ASSIGN               =                              5         
+12    NULL                 None                           5         
+13    SEMICOLON            ;                              5         
+14    VARIABLE             $decimal                       6         
+15    ASSIGN               =                              6         
+16    FLOAT                3.42                           6         
+17    SEMICOLON            ;                              6         
+18    VARIABLE             $entero                        7         
+19    ASSIGN               =                              7         
+20    INTEGER              42                             7         
+21    SEMICOLON            ;                              7         
+22    VARIABLE             $negativo                      8         
+23    ASSIGN               =                              8         
+24    MINUS                -                              8         
+25    INTEGER              12                             8         
+26    SEMICOLON            ;                              8         
+27    VARIABLE             $grande                        9         
+28    ASSIGN               =                              9         
+29    INTEGER              99999                          9         
+30    SEMICOLON            ;                              9         
+31    VARIABLE             $cadena_doble                  10        
+32    ASSIGN               =                              10        
+33    STRING               Hola, PHP!                     10        
+34    SEMICOLON            ;                              10        
+35    VARIABLE             $cadena_simple                 11        
+36    ASSIGN               =                              11        
+37    STRING               Esto es una cadena simple      11        
+38    SEMICOLON            ;                              11        
+39    VARIABLE             $cadena_mixta                  12        
+40    ASSIGN               =                              12        
+41    STRING               Texto con 'comillas simples... 12        
+42    SEMICOLON            ;                              12        
+43    VARIABLE             $cadena_escapada               13        
+44    ASSIGN               =                              13        
+45    STRING               Salto de línea\n y tabulaci... 13        
+46    SEMICOLON            ;                              13        
+47    VARIABLE             $cadena_vacia                  14        
+48    ASSIGN               =                              14        
+49    STRING                                              14        
+50    SEMICOLON            ;                              14        
+51    VARIABLE             $texto1                        15        
+52    ASSIGN               =                              15        
+53    STRING               Texto con variables: $enter... 15        
+54    SEMICOLON            ;                              15        
+55    VARIABLE             $texto2                        16        
+56    ASSIGN               =                              16        
+57    STRING               Texto estático sin variable... 16        
+58    SEMICOLON            ;                              16        
+59    VARIABLE             $texto3                        17        
+60    ASSIGN               =                              17        
+61    STRING               Líneas múltiples
+pueden ser... 17        
+62    SEMICOLON            ;                              17        
+63    ECHO                 echo                           19        
+64    VARIABLE             $texto5                        19        
+65    SEMICOLON            ;                              19        
+66    ECHO                 echo                           21        
+67    VARIABLE             $cadena_doble                  21        
+68    SEMICOLON            ;                              21        
+69    ECHO                 echo                           22        
+70    STRING               Valor entero: $entero\n        22        
+71    SEMICOLON            ;                              22        
+72    ECHO                 echo                           23        
+73    STRING               Valor decimal:                 23        
+74    DOT                  .                              23        
+75    VARIABLE             $decimal                       23        
+76    DOT                  .                              23        
+77    STRING               \n                             23        
+78    SEMICOLON            ;                              23        
+79    SUPERGLOBALS         _POST                          26        
+80    LBRACKET             [                              26        
+81    STRING               username                       26        
+82    RBRACKET             ]                              26        
+83    ASSIGN               =                              26        
+84    STRING               admin                          26        
+85    SEMICOLON            ;                              26        
+86    SUPERGLOBALS         _POST                          27        
+87    LBRACKET             [                              27        
+88    STRING               clave                          27        
+89    RBRACKET             ]                              27        
+90    ASSIGN               =                              27        
+91    STRING               1234                           27        
+92    SEMICOLON            ;                              27        
+93    SUPERGLOBALS         _SESSION                       28        
+94    LBRACKET             [                              28        
+95    STRING               id                             28        
+96    RBRACKET             ]                              28        
+97    ASSIGN               =                              28        
+98    INTEGER              123                            28        
+99    SEMICOLON            ;                              28        
+100   SUPERGLOBALS         _GET                           29        
+101   LBRACKET             [                              29        
+102   STRING               action                         29        
+103   RBRACKET             ]                              29        
+104   ASSIGN               =                              29        
+105   STRING               login                          29        
+106   SEMICOLON            ;                              29        
+107   SUPERGLOBALS         _COOKIE                        30        
+108   LBRACKET             [                              30        
+109   STRING               session                        30        
+110   RBRACKET             ]                              30        
+111   ASSIGN               =                              30        
+112   STRING               abcd                           30        
+113   SEMICOLON            ;                              30        
+114   SUPERGLOBALS         _SERVER                        31        
+115   LBRACKET             [                              31        
+116   STRING               REQUEST_METHOD                 31        
+117   RBRACKET             ]                              31        
+118   ASSIGN               =                              31        
+119   STRING               POST                           31        
+120   SEMICOLON            ;                              31        
+121   SUPERGLOBALS         _FILES                         32        
+122   LBRACKET             [                              32        
+123   STRING               file                           32        
+124   RBRACKET             ]                              32        
+125   ASSIGN               =                              32        
+126   NULL                 None                           32        
+127   SEMICOLON            ;                              32        
+128   SUPERGLOBALS         _REQUEST                       33        
+129   LBRACKET             [                              33        
+130   STRING               q                              33        
+131   RBRACKET             ]                              33        
+132   ASSIGN               =                              33        
+133   STRING               buscar                         33        
+134   SEMICOLON            ;                              33        
+135   SUPERGLOBALS         _ENV                           34        
+136   LBRACKET             [                              34        
+137   STRING               PATH                           34        
+138   RBRACKET             ]                              34        
+139   ASSIGN               =                              34        
+140   STRING               /usr/bin                       34        
+141   SEMICOLON            ;                              34        
+142   SUPERGLOBALS         GLOBALS                        35        
+143   LBRACKET             [                              35        
+144   STRING               globalVar                      35        
+145   RBRACKET             ]                              35        
+146   ASSIGN               =                              35        
+147   INTEGER              100                            35        
+148   SEMICOLON            ;                              35        
+149   ECHO                 echo                           37        
+150   SUPERGLOBALS         _POST                          37        
+151   LBRACKET             [                              37        
+152   STRING               usuario                        37        
+153   RBRACKET             ]                              37        
+154   SEMICOLON            ;                              37        
+155   ECHO                 echo                           38        
+156   SUPERGLOBALS         _GET                           38        
+157   LBRACKET             [                              38        
+158   STRING               accion                         38        
+159   RBRACKET             ]                              38        
+160   SEMICOLON            ;                              38        
+161   VARIABLE             $logico1                       42        
+162   ASSIGN               =                              42        
+163   SUPERGLOBALS         _GET                           42        
+164   AND_OP               &&                             42        
+165   BOOL                 False                          42        
+166   OR_OP                ||                             42        
+167   NOT_OP               !                              42        
+168   BOOL                 True                           42        
+169   XOR_OP               xor                            42        
+170   BOOL                 True                           42        
+171   SEMICOLON            ;                              42        
+172   VARIABLE             $logico2                       43        
+173   ASSIGN               =                              43        
+174   SUPERGLOBALS         _POST                          43        
+175   OR_OP                or                             43        
+176   VARIABLE             $bool_true                     43        
+177   AND_OP               and                            43        
+178   NOT_OP               !                              43        
+179   VARIABLE             $bool_false                    43        
+180   SEMICOLON            ;                              43        
+181   VARIABLE             $logico3                       44        
+182   ASSIGN               =                              44        
+183   BOOL                 True                           44        
+184   AND_OP               &&                             44        
+185   BOOL                 False                          44        
+186   SEMICOLON            ;                              44        
+187   VARIABLE             $logico4                       45        
+188   ASSIGN               =                              45        
+189   VARIABLE             $bool_true                     45        
+190   AND_OP               and                            45        
+191   NOT_OP               !                              45        
+192   VARIABLE             $bool_false                    45        
+193   SEMICOLON            ;                              45        
+194   VARIABLE             $logico5                       46        
+195   ASSIGN               =                              46        
+196   VARIABLE             $bool_false                    46        
+197   OR_OP                or                             46        
+198   VARIABLE             $bool_true                     46        
+199   SEMICOLON            ;                              46        
+200   VARIABLE             $logico6                       47        
+201   ASSIGN               =                              47        
+202   VARIABLE             $bool_true                     47        
+203   XOR_OP               xor                            47        
+204   VARIABLE             $bool_false                    47        
+205   SEMICOLON            ;                              47        
+206   VARIABLE             $logico7                       48        
+207   ASSIGN               =                              48        
+208   NOT_OP               !                              48        
+209   LPAREN               (                              48        
+210   VARIABLE             $logico1                       48        
+211   OR_OP                ||                             48        
+212   VARIABLE             $logico2                       48        
+213   RPAREN               )                              48        
+214   AND_OP               &&                             48        
+215   VARIABLE             $logico3                       48        
+216   SEMICOLON            ;                              48        
+217   IF                   if                             59        
+218   LPAREN               (                              59        
+219   VARIABLE             $logico5                       59        
+220   RPAREN               )                              59        
+221   LBRACE               {                              59        
+222   ECHO                 echo                           60        
+223   STRING               Expresión lógica verdadera\... 60        
+224   SEMICOLON            ;                              60        
+225   RBRACE               }                              61        
+226   ELSE                 else                           61        
+227   LBRACE               {                              61        
+228   ECHO                 echo                           62        
+229   STRING               Expresión lógica falsa\n       62        
+230   SEMICOLON            ;                              62        
+231   RBRACE               }                              63        
+232   IF                   if                             65        
+233   LPAREN               (                              65        
+234   SUPERGLOBALS         _GET                           65        
+235   AND_OP               &&                             65        
+236   SUPERGLOBALS         _POST                          65        
+237   AND_OP               &&                             65        
+238   SUPERGLOBALS         _SESSION                       65        
+239   RPAREN               )                              65        
+240   LBRACE               {                              65        
+241   ECHO                 echo                           66        
+242   STRING               Se detectaron varias superg... 66        
+243   SEMICOLON            ;                              66        
+244   RBRACE               }                              67        
+245   IF                   if                             69        
+246   LPAREN               (                              69        
+247   SUPERGLOBALS         _FILES                         69        
+248   OR_OP                ||                             69        
+249   SUPERGLOBALS         _REQUEST                       69        
+250   RPAREN               )                              69        
+251   LBRACE               {                              69        
+252   ECHO                 echo                           70        
+253   STRING               Archivos o peticiones detec... 70        
+254   SEMICOLON            ;                              70        
+255   RBRACE               }                              71        
+256   IF                   if                             73        
+257   LPAREN               (                              73        
+258   NOT_OP               !                              73        
+259   SUPERGLOBALS         _ENV                           73        
+260   RPAREN               )                              73        
+261   LBRACE               {                              73        
+262   ECHO                 echo                           74        
+263   STRING               Variable de entorno vacía o... 74        
+264   SEMICOLON            ;                              74        
+265   RBRACE               }                              75        
+266   IF                   if                             77        
+267   LPAREN               (                              77        
+268   VARIABLE             $logico7                       77        
+269   RPAREN               )                              77        
+270   LBRACE               {                              77        
+271   ECHO                 echo                           78        
+272   STRING               La condición final se cumpl... 78        
+273   SEMICOLON            ;                              78        
+274   RBRACE               }                              79        
+275   ELSE                 else                           79        
+276   LBRACE               {                              79        
+277   ECHO                 echo                           80        
+278   STRING               Condición no cumplida\n        80        
+279   SEMICOLON            ;                              80        
+280   RBRACE               }                              81        
+281   VARIABLE             $verificar                     84        
+282   ASSIGN               =                              84        
+283   ID                   isset                          84        
+284   LPAREN               (                              84        
+285   SUPERGLOBALS         _POST                          84        
+286   LBRACKET             [                              84        
+287   STRING               usuario                        84        
+288   RBRACKET             ]                              84        
+289   RPAREN               )                              84        
+290   AND_OP               &&                             84        
+291   SUPERGLOBALS         _SERVER                        84        
+292   LBRACKET             [                              84        
+293   STRING               REQUEST_METHOD                 84        
+294   RBRACKET             ]                              84        
+295   EQ                   ==                             84        
+296   STRING               POST                           84        
+297   OR_OP                ||                             84        
+298   NOT_OP               !                              84        
+299   VARIABLE             $bool_false                    84        
+300   SEMICOLON            ;                              84        
+301   VARIABLE             $comparar                      85        
+302   ASSIGN               =                              85        
+303   SUPERGLOBALS         _COOKIE                        85        
+304   LBRACKET             [                              85        
+305   STRING               tema                           85        
+306   RBRACKET             ]                              85        
+307   EQ                   ==                             85        
+308   STRING               oscuro                         85        
+309   XOR_OP               xor                            85        
+310   SUPERGLOBALS         _GET                           85        
+311   LBRACKET             [                              85        
+312   STRING               accion                         85        
+313   RBRACKET             ]                              85        
+314   EQ                   ==                             85        
+315   STRING               iniciar                        85        
+316   SEMICOLON            ;                              85        
+317   VARIABLE             $ejemplo1                      88        
+318   ASSIGN               =                              88        
+319   SUPERGLOBALS         _POST                          88        
+320   AND_OP               &&                             88        
+321   SUPERGLOBALS         _SESSION                       88        
+322   OR_OP                ||                             88        
+323   SUPERGLOBALS         _GET                           88        
+324   SEMICOLON            ;                              88        
+325   VARIABLE             $ejemplo2                      89        
+326   ASSIGN               =                              89        
+327   VARIABLE             $bool_true                     89        
+328   AND_OP               &&                             89        
+329   LPAREN               (                              89        
+330   SUPERGLOBALS         _POST                          89        
+331   LBRACKET             [                              89        
+332   STRING               usuario                        89        
+333   RBRACKET             ]                              89        
+334   OR_OP                or                             89        
+335   SUPERGLOBALS         _POST                          89        
+336   LBRACKET             [                              89        
+337   STRING               clave                          89        
+338   RBRACKET             ]                              89        
+339   RPAREN               )                              89        
+340   SEMICOLON            ;                              89        
+341   VARIABLE             $ejemplo3                      90        
+342   ASSIGN               =                              90        
+343   NOT_OP               !                              90        
+344   VARIABLE             $bool_false                    90        
+345   AND_OP               &&                             90        
+346   LPAREN               (                              90        
+347   SUPERGLOBALS         _ENV                           90        
+348   LBRACKET             [                              90        
+349   STRING               PATH                           90        
+350   RBRACKET             ]                              90        
+351   NOT_OP               !                              90        
+352   ASSIGN               =                              90        
+353   NULL                 None                           90        
+354   RPAREN               )                              90        
+355   SEMICOLON            ;                              90        
+356   VARIABLE             $ejemplo4                      91        
+357   ASSIGN               =                              91        
+358   SUPERGLOBALS         _COOKIE                        91        
+359   AND_OP               &&                             91        
+360   SUPERGLOBALS         _FILES                         91        
+361   AND_OP               &&                             91        
+362   VARIABLE             $bool_true                     91        
+363   SEMICOLON            ;                              91        
+364   VARIABLE             $ejemplo5                      92        
+365   ASSIGN               =                              92        
+366   LPAREN               (                              92        
+367   SUPERGLOBALS         _REQUEST                       92        
+368   OR_OP                or                             92        
+369   SUPERGLOBALS         _SERVER                        92        
+370   RPAREN               )                              92        
+371   AND_OP               and                            92        
+372   NOT_OP               !                              92        
+373   VARIABLE             $bool_false                    92        
+374   SEMICOLON            ;                              92        
+375   ECHO                 echo                           94        
+376   STRING               Fin de análisis del algorit... 94        
+377   SEMICOLON            ;                              94        
+378   PHP_CLOSE            ?>                             95        
+
+================================================================================
+✓ ANÁLISIS COMPLETADO SIN ERRORES LÉXICOS
+================================================================================
+FIN DEL ANÁLISIS
+================================================================================

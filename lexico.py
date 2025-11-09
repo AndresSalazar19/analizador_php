@@ -155,10 +155,14 @@ t_OBJECT_OP = r'->'
 
 tokens_yadira = [
     'SUPERGLOBALS',  # $GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV
-    'BOOL',              # true o false
+    'BOOL_TRUE',         # true
+    'BOOL_FALSE',         # false
     'INTEGER',           # 123
     'FLOAT',             # 123.45
     'AMPERSAND',        # &
+    'READLINE',
+    'FGETS',
+    'STDIN',
 
     # Operadores lógicos
     'AND_OP',             # && or 'and'
@@ -223,6 +227,9 @@ t_COLON = r':'
 t_DOT = r'\.'
 t_ASSIGN = r'='
 t_AMPERSAND = r'&'
+t_READLINE = r'readline'
+t_FGETS = r'fgets'
+t_STDIN = r'STDIN'
 
 # Primero verificar superglobales
 def t_SUPERGLOBALS(t):
@@ -251,9 +258,14 @@ def t_XOR_OP(t):
     r'\bxor\b'
     return t
 
-def t_BOOL(t):
-    r'\b(true|false)\b'
-    t.value = True if t.value.lower() == 'true' else False
+def t_BOOL_TRUE(t):
+    r'\btrue\b'
+    t.value = True
+    return t
+
+def t_BOOL_FALSE(t):
+    r'\bfalse\b'
+    t.value = False
     return t
 
 # Identificadores (para palabras reservadas)
@@ -268,13 +280,13 @@ def t_ID(t):
 
 # Números de punto flotante (va antes que INTEGER)
 def t_FLOAT(t):
-    r'\d+\.\d+'
+    r'(\+|-)?\d+\.\d+'
     t.value = float(t.value)
     return t
 
 # Números enteros
 def t_INTEGER(t):
-    r'\d+'
+    r'(\+|-)?\d+'
     t.value = int(t.value)
     return t
 
