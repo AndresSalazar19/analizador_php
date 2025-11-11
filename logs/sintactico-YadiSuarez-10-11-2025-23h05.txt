@@ -2,7 +2,7 @@
 ANÁLISIS SINTACTICO - PHP
 Integrante: Yadira Suárez
 Usuario GitHub: YadiSuarez
-Fecha y Hora: 10/11/2025 21:41:14
+Fecha y Hora: 10/11/2025 23:05:38
 ==========================================================================================
 
 CÓDIGO ANALIZADO:
@@ -169,7 +169,7 @@ echo "Fin de análisis del algoritmo de Yadira\n";
 ══════════════════════════════════════════════════════════════════════════════════════════
 RESULTADOS DEL ANÁLISIS LÉXICO
 ══════════════════════════════════════════════════════════════════════════════════════════
-Tokens reconocidos: 540
+Tokens reconocidos: 538
 Errores léxicos: 0
 ------------------------------------------------------------------------------------------
 #     TIPO                 VALOR                          LÍNEA     
@@ -653,116 +653,538 @@ pueden ser... 17
 476   LBRACKET             [                              135       
 477   STRING               PATH                           135       
 478   RBRACKET             ]                              135       
-479   NOT_OP               !                              135       
-480   ASSIGN               =                              135       
-481   NULL                 None                           135       
-482   RPAREN               )                              135       
-483   SEMICOLON            ;                              135       
-484   VARIABLE             $ejemplo4                      136       
-485   ASSIGN               =                              136       
-486   SUPERGLOBALS         _COOKIE                        136       
-487   AND_OP               &&                             136       
-488   SUPERGLOBALS         _FILES                         136       
-489   AND_OP               &&                             136       
-490   VARIABLE             $bool_true                     136       
-491   SEMICOLON            ;                              136       
-492   VARIABLE             $ejemplo5                      137       
-493   ASSIGN               =                              137       
-494   LPAREN               (                              137       
-495   SUPERGLOBALS         _REQUEST                       137       
-496   OR_OP                or                             137       
-497   SUPERGLOBALS         _SERVER                        137       
-498   RPAREN               )                              137       
-499   AND_OP               and                            137       
-500   NOT_OP               !                              137       
-501   VARIABLE             $bool_false                    137       
-502   SEMICOLON            ;                              137       
-503   ECHO                 echo                           139       
-504   STRING               Fin de análisis del algorit... 139       
-505   SEMICOLON            ;                              139       
-506   ECHO                 echo                           143       
-507   STRING               Ingrese su nombre:             143       
-508   SEMICOLON            ;                              143       
-509   VARIABLE             $nombre_usuario                144       
-510   ASSIGN               =                              144       
-511   ID                   trim                           144       
-512   LPAREN               (                              144       
-513   ID                   fgets                          144       
-514   LPAREN               (                              144       
-515   ID                   STDIN                          144       
+479   NE                   !=                             135       
+480   NULL                 None                           135       
+481   RPAREN               )                              135       
+482   SEMICOLON            ;                              135       
+483   VARIABLE             $ejemplo4                      136       
+484   ASSIGN               =                              136       
+485   SUPERGLOBALS         _COOKIE                        136       
+486   AND_OP               &&                             136       
+487   SUPERGLOBALS         _FILES                         136       
+488   AND_OP               &&                             136       
+489   VARIABLE             $bool_true                     136       
+490   SEMICOLON            ;                              136       
+491   VARIABLE             $ejemplo5                      137       
+492   ASSIGN               =                              137       
+493   LPAREN               (                              137       
+494   SUPERGLOBALS         _REQUEST                       137       
+495   OR_OP                or                             137       
+496   SUPERGLOBALS         _SERVER                        137       
+497   RPAREN               )                              137       
+498   AND_OP               and                            137       
+499   NOT_OP               !                              137       
+500   VARIABLE             $bool_false                    137       
+501   SEMICOLON            ;                              137       
+502   ECHO                 echo                           139       
+503   STRING               Fin de análisis del algorit... 139       
+504   SEMICOLON            ;                              139       
+505   ECHO                 echo                           143       
+506   STRING               Ingrese su nombre:             143       
+507   SEMICOLON            ;                              143       
+508   VARIABLE             $nombre_usuario                144       
+509   ASSIGN               =                              144       
+510   ID                   trim                           144       
+511   LPAREN               (                              144       
+512   ID                   fgets                          144       
+513   LPAREN               (                              144       
+514   ID                   STDIN                          144       
+515   RPAREN               )                              144       
 516   RPAREN               )                              144       
-517   RPAREN               )                              144       
-518   SEMICOLON            ;                              144       
-519   IF                   if                             146       
-520   LPAREN               (                              146       
-521   VARIABLE             $nombre_usuario                146       
-522   NOT_OP               !                              146       
-523   ASSIGN               =                              146       
-524   STRING                                              146       
-525   RPAREN               )                              146       
-526   LBRACE               {                              146       
-527   ECHO                 echo                           147       
-528   STRING               Bienvenido, $nombre_usuario... 147       
-529   SEMICOLON            ;                              147       
-530   RBRACE               }                              148       
-531   ELSE                 else                           148       
-532   LBRACE               {                              148       
-533   ECHO                 echo                           149       
-534   STRING               No se ingresó ningún nombre... 149       
-535   SEMICOLON            ;                              149       
-536   RBRACE               }                              150       
-537   ECHO                 echo                           152       
-538   STRING               Fin de análisis del algorit... 152       
-539   SEMICOLON            ;                              152       
-540   PHP_CLOSE            ?>                             153       
+517   SEMICOLON            ;                              144       
+518   IF                   if                             146       
+519   LPAREN               (                              146       
+520   VARIABLE             $nombre_usuario                146       
+521   NE                   !=                             146       
+522   STRING                                              146       
+523   RPAREN               )                              146       
+524   LBRACE               {                              146       
+525   ECHO                 echo                           147       
+526   STRING               Bienvenido, $nombre_usuario... 147       
+527   SEMICOLON            ;                              147       
+528   RBRACE               }                              148       
+529   ELSE                 else                           148       
+530   LBRACE               {                              148       
+531   ECHO                 echo                           149       
+532   STRING               No se ingresó ningún nombre... 149       
+533   SEMICOLON            ;                              149       
+534   RBRACE               }                              150       
+535   ECHO                 echo                           152       
+536   STRING               Fin de análisis del algorit... 152       
+537   SEMICOLON            ;                              152       
+538   PHP_CLOSE            ?>                             153       
 
 ✓ Análisis léxico completado sin errores
 
 ══════════════════════════════════════════════════════════════════════════════════════════
 RESULTADOS DEL ANÁLISIS SINTÁCTICO
 ══════════════════════════════════════════════════════════════════════════════════════════
-✗ Se detectaron 40 errores sintácticos:
+✓ Análisis sintáctico completado sin errores
 ------------------------------------------------------------------------------------------
-1. Error de sintaxis en '[' (tipo LBRACKET) en línea 37
-2. Error de sintaxis en '&&' (tipo AND_OP) en línea 42
-3. Error de sintaxis en 'or' (tipo OR_OP) en línea 43
-4. Error de sintaxis en 'and' (tipo AND_OP) en línea 45
-5. Error de sintaxis en 'or' (tipo OR_OP) en línea 46
-6. Error de sintaxis en 'xor' (tipo XOR_OP) en línea 47
-7. Error de sintaxis en '||' (tipo OR_OP) en línea 48
-8. Error de sintaxis en ')' (tipo RPAREN) en línea 59
-9. Error de sintaxis en '}' (tipo RBRACE) en línea 61
-10. Error de sintaxis en '}' (tipo RBRACE) en línea 63
-11. Error de sintaxis en '&&' (tipo AND_OP) en línea 65
-12. Error de sintaxis en '}' (tipo RBRACE) en línea 67
-13. Error de sintaxis en '||' (tipo OR_OP) en línea 69
-14. Error de sintaxis en '}' (tipo RBRACE) en línea 71
-15. Error de sintaxis en ')' (tipo RPAREN) en línea 73
-16. Error de sintaxis en '}' (tipo RBRACE) en línea 75
-17. Error de sintaxis en ')' (tipo RPAREN) en línea 77
-18. Error de sintaxis en '}' (tipo RBRACE) en línea 79
-19. Error de sintaxis en '}' (tipo RBRACE) en línea 81
-20. Error de sintaxis en ',' (tipo COMMA) en línea 88
-21. Error de sintaxis en '[' (tipo LBRACKET) en línea 97
-22. Error de sintaxis en '[' (tipo LBRACKET) en línea 98
-23. Error de sintaxis en '++' (tipo INCREMENT) en línea 104
-24. Error de sintaxis en 'mostrarSaludo' (tipo ID) en línea 117
-25. Error de sintaxis en ';' (tipo SEMICOLON) en línea 117
-26. Error de sintaxis en ';' (tipo SEMICOLON) en línea 118
-27. Error de sintaxis en 'isset' (tipo ID) en línea 129
-28. Error de sintaxis en '==' (tipo EQ) en línea 129
-29. Error de sintaxis en '[' (tipo LBRACKET) en línea 130
-30. Error de sintaxis en '==' (tipo EQ) en línea 130
-31. Error de sintaxis en '&&' (tipo AND_OP) en línea 133
-32. Error de sintaxis en '&&' (tipo AND_OP) en línea 134
-33. Error de sintaxis en ')' (tipo RPAREN) en línea 134
-34. Error de sintaxis en '&&' (tipo AND_OP) en línea 135
-35. Error de sintaxis en '&&' (tipo AND_OP) en línea 136
-36. Error de sintaxis en 'or' (tipo OR_OP) en línea 137
-37. Error de sintaxis en 'trim' (tipo ID) en línea 144
-38. Error de sintaxis en '!' (tipo NOT_OP) en línea 146
-39. Error de sintaxis en '}' (tipo RBRACE) en línea 148
-40. Error de sintaxis en '}' (tipo RBRACE) en línea 150
+
+ÁRBOL SINTÁCTICO GENERADO:
+------------------------------------------------------------------------------------------
+[
+  ├─ '<?php'
+  ├─ (asignacion_booleana
+    ├─ '$bool_true'
+    └─ True
+  )
+  ├─ (asignacion_booleana
+    ├─ '$bool_false'
+    └─ False
+  )
+  ├─ (declaracion
+    ├─ '$var_null'
+  )
+  ├─ (declaracion
+    ├─ '$decimal'
+    └─ 3.42
+  )
+  ├─ (declaracion
+    ├─ '$entero'
+    └─ 42
+  )
+  ├─ (declaracion
+    ├─ '$negativo'
+    └─ -12
+  )
+  ├─ (declaracion
+    ├─ '$grande'
+    └─ 99999
+  )
+  ├─ (declaracion
+    ├─ '$cadena_doble'
+    └─ 'Hola, PHP!'
+  )
+  ├─ (declaracion
+    ├─ '$cadena_simple'
+    └─ 'Esto es una cadena simple'
+  )
+  ├─ (declaracion
+    ├─ '$cadena_mixta'
+    └─ "Texto con 'comillas simples' dentro"
+  )
+  ├─ (declaracion
+    ├─ '$cadena_escapada'
+    └─ 'Salto de línea\\n y tabulación\\t'
+  )
+  ├─ (declaracion
+    ├─ '$cadena_vacia'
+    └─ ''
+  )
+  ├─ (declaracion
+    ├─ '$texto1'
+    └─ 'Texto con variables: $entero, $decimal, $bool_true'
+  )
+  ├─ (declaracion
+    ├─ '$texto2'
+    └─ 'Texto estático sin variables: $entero y $decimal'
+  )
+  ├─ (declaracion
+    ├─ '$texto3'
+    └─ 'Líneas múltiples\npueden ser concatenadas\nsin problema'
+  )
+  ├─ (echo
+    └─ '$texto5'
+  )
+  ├─ (echo
+    └─ '$cadena_doble'
+  )
+  ├─ (echo
+    └─ 'Valor entero: $entero\\n'
+  )
+  ├─ (echo
+    └─ (.
+      ├─ (.
+        ├─ 'Valor decimal: '
+        └─ '$decimal'
+      )
+      └─ '\\n'
+    )
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_POST'
+    ├─ 'username'
+    └─ 'admin'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_POST'
+    ├─ 'clave'
+    └─ '1234'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_SESSION'
+    ├─ 'id'
+    └─ 123
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_GET'
+    ├─ 'action'
+    └─ 'login'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_COOKIE'
+    ├─ 'session'
+    └─ 'abcd'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_SERVER'
+    ├─ 'REQUEST_METHOD'
+    └─ 'POST'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_FILES'
+    ├─ 'file'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_REQUEST'
+    ├─ 'q'
+    └─ 'buscar'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ '_ENV'
+    ├─ 'PATH'
+    └─ '/usr/bin'
+  )
+  ├─ (asignacion_superGlobal
+    ├─ 'GLOBALS'
+    ├─ 'globalVar'
+    └─ 100
+  )
+  ├─ (echo
+  )
+  ├─ (echo
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico1'
+    └─ (&&
+      ├─ '_GET'
+      └─ (||
+        ├─ False
+        └─ (xor
+          ├─ (not
+            └─ True
+          )
+          └─ True
+        )
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico2'
+    └─ (or
+      ├─ '_POST'
+      └─ (and
+        ├─ '$bool_true'
+        └─ (not
+          └─ '$bool_false'
+        )
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico3'
+    └─ (&&
+      ├─ True
+      └─ False
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico4'
+    └─ (and
+      ├─ '$bool_true'
+      └─ (not
+        └─ '$bool_false'
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico5'
+    └─ (or
+      ├─ '$bool_false'
+      └─ '$bool_true'
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico6'
+    └─ (xor
+      ├─ '$bool_true'
+      └─ '$bool_false'
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$logico7'
+    └─ (&&
+      ├─ (not
+        └─ (||
+          ├─ '$logico1'
+          └─ '$logico2'
+        )
+      )
+      └─ '$logico3'
+    )
+  )
+  ├─ (if
+    ├─ '$logico5'
+    ├─ [
+      └─ (echo
+        └─ 'Expresión lógica verdadera\\n'
+      )
+    ]
+    └─ [
+      └─ (echo
+        └─ 'Expresión lógica falsa\\n'
+      )
+    ]
+  )
+  ├─ (if
+    ├─ (&&
+      ├─ '_GET'
+      └─ (&&
+        ├─ '_POST'
+        └─ '_SESSION'
+      )
+    )
+    ├─ [
+      └─ (echo
+        └─ 'Se detectaron varias superglobales\\n'
+      )
+    ]
+  )
+  ├─ (if
+    ├─ (||
+      ├─ '_FILES'
+      └─ '_REQUEST'
+    )
+    ├─ [
+      └─ (echo
+        └─ 'Archivos o peticiones detectadas\\n'
+      )
+    ]
+  )
+  ├─ (if
+    ├─ (not
+      └─ '_ENV'
+    )
+    ├─ [
+      └─ (echo
+        └─ 'Variable de entorno vacía o no definida\\n'
+      )
+    ]
+  )
+  ├─ (if
+    ├─ '$logico7'
+    ├─ [
+      └─ (echo
+        └─ 'La condición final se cumple\\n'
+      )
+    ]
+    └─ [
+      └─ (echo
+        └─ 'Condición no cumplida\\n'
+      )
+    ]
+  )
+  ├─ (asignacion_array
+    ├─ '$estudiante'
+    └─ {
+      ├─ notas => 
+        [
+          ├─ 10
+          ├─ 9.5
+          └─ 8.7
+        ]
+      ├─ carrera => Computación
+      ├─ edad => 21
+      └─ nombre => Yadira
+    }
+  )
+  ├─ (asignacion_array
+    ├─ '$materias'
+    └─ {
+      ├─ ingles => En curso
+      ├─ matematicas => Aprobada
+      └─ programacion => Aprobada
+    }
+  )
+  ├─ (echo
+    └─ (.
+      ├─ (.
+        ├─ 'Nombre: '
+      )
+      └─ '\\n'
+    )
+  )
+  ├─ (echo
+    └─ (.
+      ├─ (.
+        ├─ 'Nota de Matemáticas: '
+      )
+      └─ '\\n'
+    )
+  )
+  ├─ (declaracion
+    ├─ '$contador'
+    └─ 0
+  )
+  ├─ (while
+    ├─ (<
+      ├─ '$contador'
+      └─ 3
+    )
+    └─ [
+      ├─ (echo
+        └─ 'Iteración WHILE número: $contador\\n'
+      )
+      └─ '$contador'
+    ]
+  )
+  ├─ (foreach
+    ├─ '$materias'
+    ├─ '$materia'
+    ├─ '$estado'
+    └─ [
+      └─ (echo
+        └─ 'Materia: $materia - Estado: $estado\\n'
+      )
+    ]
+  )
+  ├─ (funcion_con_retorno
+    ├─ 'mostrarSaludo'
+    ├─ [
+      └─ (param
+        ├─ '$nombre'
+      )
+    ]
+    └─ [
+      └─ (echo
+        └─ 'Hola, $nombre!\\n'
+      )
+    ]
+  )
+  ├─ (declaracion
+    ├─ '$a'
+    └─ 10
+  )
+  ├─ (asignacion_referencia
+    ├─ '$b'
+    └─ (referencia
+      └─ '$a'
+    )
+  )
+  ├─ (declaracion
+    ├─ '$b'
+    └─ 25
+  )
+  ├─ (echo
+    └─ 'Valor de a después de referencia: $a\\n'
+  )
+  ├─ (asignacion_booleana
+    ├─ '$verificar'
+    └─ (&&
+      └─ (||
+        ├─ (==
+          └─ 'POST'
+        )
+        └─ (not
+          └─ '$bool_false'
+        )
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$comparar'
+    └─ (xor
+      ├─ (==
+        └─ 'oscuro'
+      )
+      └─ (==
+        └─ 'iniciar'
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$ejemplo1'
+    └─ (&&
+      ├─ '_POST'
+      └─ (||
+        ├─ '_SESSION'
+        └─ '_GET'
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$ejemplo2'
+    └─ (&&
+      ├─ '$bool_true'
+      └─ (or
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$ejemplo3'
+    └─ (&&
+      ├─ (not
+        └─ '$bool_false'
+      )
+      └─ (!=
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$ejemplo4'
+    └─ (&&
+      ├─ '_COOKIE'
+      └─ (&&
+        ├─ '_FILES'
+        └─ '$bool_true'
+      )
+    )
+  )
+  ├─ (asignacion_booleana
+    ├─ '$ejemplo5'
+    └─ (and
+      ├─ (or
+        ├─ '_REQUEST'
+        └─ '_SERVER'
+      )
+      └─ (not
+        └─ '$bool_false'
+      )
+    )
+  )
+  ├─ (echo
+    └─ 'Fin de análisis del algoritmo de Yadira'
+  )
+  ├─ (echo
+    └─ 'Ingrese su nombre: '
+  )
+  ├─ (declaracion
+    ├─ '$nombre_usuario'
+  )
+  ├─ (if
+    ├─ (!=
+      ├─ '$nombre_usuario'
+      └─ ''
+    )
+    ├─ [
+      └─ (echo
+        └─ 'Bienvenido, $nombre_usuario!\\n'
+      )
+    ]
+    └─ [
+      └─ (echo
+        └─ 'No se ingresó ningún nombre.\\n'
+      )
+    ]
+  )
+  ├─ (echo
+    └─ 'Fin de análisis del algoritmo de Yadira\\n'
+  )
+  └─ '?>'
+]
+
 ------------------------------------------------------------------------------------------
 
 ==========================================================================================

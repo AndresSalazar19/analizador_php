@@ -2,7 +2,7 @@
 ANÁLISIS SINTACTICO - PHP
 Integrante: Andrés Salazar
 Usuario GitHub: AndresSalazar19
-Fecha y Hora: 10/11/2025 22:26:49
+Fecha y Hora: 10/11/2025 23:05:19
 ==========================================================================================
 
 CÓDIGO ANALIZADO:

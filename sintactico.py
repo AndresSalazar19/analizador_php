@@ -68,7 +68,9 @@ def p_sentencia(p):
                  | define_stmt
                  | RETURN expresion SEMICOLON
                  | BREAK SEMICOLON
-                 | CONTINUE SEMICOLON'''
+                 | CONTINUE SEMICOLON
+                 | VARIABLE INCREMENT SEMICOLON
+                 | callFunction SEMICOLON'''
     p[0] = p[1]
 
 def p_define_stmt(p):
@@ -303,7 +305,7 @@ def p_expressBol(p):
 
 def p_operacionComparacion(p):
     '''operacionComparacion : valor operadorCom valor
-                            | expresion operadorCom expresion
+                            | valor
                             | BOOL_TRUE
                             | BOOL_FALSE'''
     if len(p) == 2:
@@ -649,6 +651,8 @@ def p_valor(p):
              | VARIABLE
              | THIS_VAR
              | SUPERGLOBALS
+             | callObject
+             | callFunction
              | STRING
              | BOOL_TRUE
              | BOOL_FALSE
@@ -659,7 +663,14 @@ def p_valor(p):
              | array_func'''
     p[0] = p[1]
 
-
+def p_callFunction(p):
+    '''callFunction : ID LPAREN valor RPAREN
+                    | ID LPAREN callFunction RPAREN'''
+    
+def p_callObject(p):
+    '''callObject : SUPERGLOBALS LBRACKET valor RBRACKET
+                | VARIABLE LBRACKET valor RBRACKET'''
+    
 def p_array_func(p):
     '''array_func : ARRAY LPAREN array_content RPAREN
                   | ARRAY LPAREN RPAREN'''
