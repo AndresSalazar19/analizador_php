@@ -128,226 +128,7 @@ def analizar_valor(nodo, verificar_existencia=True):
         tipo_nodo = nodo[0]
         
         # Variable
-        if len(nodo) >= 2 and isinstance(nodo[1], str) and nodo[1].startswith('
-
-
-def verificar_globales(valor):
-    if isinstance(valor, tuple) and valor[0] == 'valor' and isinstance(valor[1], tuple):
-        superglobal, indice = valor[1][0], "$" + valor[1][1]
-        if superglobal == 'GLOBALS':
-            if indice not in tabla_simbolos['globales']:
-                agregar_error(f"variable {indice} no está definida en GLOBALS.")
-            return True
-    return False
-
-
-def declarar_variable(nodo):
-    nombre = nodo[1]
-    valor = nodo[2]
-
-    if verificar_globales(valor):
-        return
-
-    if isinstance(valor, tuple) and valor[0] == 'valor' and not isinstance(valor[1], tuple):
-        dato = valor[1]
-        tipo_valor = detectar_tipo(dato)
-        if en_ambito_local():
-            tabla_simbolos['locales'][-1][nombre] = (tipo_valor, dato)
-        else:
-            tabla_simbolos['globales'][nombre] = (tipo_valor, dato)
-    else:
-        # Analizar expresiones complejas
-        tipo_valor = analizar_valor(valor, verificar_existencia=True)
-        if en_ambito_local():
-            tabla_simbolos['locales'][-1][nombre] = (tipo_valor, None)
-        else:
-            tabla_simbolos['globales'][nombre] = (tipo_valor, None)
-
-
-def declaracion_superglobal(nodo):
-    nombre = nodo[1]
-    indice = "$" + nodo[2]
-    valor = nodo[3]
-
-    if nombre == 'GLOBALS':
-        if isinstance(valor, tuple) and valor[0] == 'valor':
-            dato = valor[1]
-            tipo_valor = detectar_tipo(dato)
-            tabla_simbolos["globales"][indice] = (tipo_valor, dato)
-        else:
-            tipo_valor = analizar_valor(valor, verificar_existencia=True)
-            tabla_simbolos["globales"][indice] = (tipo_valor, None)
-
-
-def analizar_define(nodo):
-    nombre_constante = nodo[1]
-    valor = nodo[2]
-
-    if nombre_constante in tabla_simbolos['constantes']:
-        agregar_error(f"Intento de modificar constante '{nombre_constante}'. Las constantes no pueden ser redefinidas.")
-        return
-
-    tipo_valor = analizar_valor(valor, verificar_existencia=False)
-    tabla_simbolos['constantes'][nombre_constante] = (tipo_valor, valor)
-
-
-def analizar_funcion(nodo):
-    parametros = nodo[2]
-    cuerpo = nodo[3]
-
-    entrar_scope_local()
-
-    for param in parametros:
-        if param[0] == 'param':
-            tabla_simbolos['locales'][-1][param[1]] = ('desconocido', None)
-        elif param[0] == 'param_default':
-            tipo_param = analizar_valor(param[2], verificar_existencia=False)
-            tabla_simbolos['locales'][-1][param[1]] = (tipo_param, param[2])
-
-    if isinstance(cuerpo, list):
-        for sentencia in cuerpo:
-            analizar(sentencia)
-
-    salir_scope_local()
-
-
-def analizar(nodo):
-    if not nodo or not isinstance(nodo, tuple):
-        return
-
-    tipo = nodo[0]
-
-    if tipo == 'declaracion':
-        declarar_variable(nodo)
-    elif tipo == 'declaraciones_multiples':
-        for var_name, var_expr in nodo[1]:
-            analizar(('declaracion', var_name, var_expr))
-    elif tipo == 'asignacion_superGlobal':
-        declaracion_superglobal(nodo)
-    elif tipo in ('define', 'Const'):
-        analizar_define(nodo)
-    elif tipo == 'funciones':
-        analizar_funcion(nodo[1])
-    elif tipo == 'echo':
-        contenido = nodo[1]
-        if isinstance(contenido, list):
-            for expr in contenido:
-                analizar_valor(expr, verificar_existencia=True)
-        else:
-            analizar_valor(contenido, verificar_existencia=True)
-    elif tipo in ('if', 'elseif'):
-        # Analizar condición
-        analizar_valor(nodo[1], verificar_existencia=True)
-        # Analizar cuerpo
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for sentencia in nodo[2]:
-                analizar(sentencia)
-        # Si hay else, analizarlo
-        if len(nodo) > 3 and nodo[3]:
-            analizar(nodo[3])
-    elif tipo == 'else':
-        # Analizar cuerpo del else
-        if len(nodo) > 1 and isinstance(nodo[1], list):
-            for sentencia in nodo[1]:
-                analizar(sentencia)
-    elif tipo == 'while':
-        analizar_valor(nodo[1], verificar_existencia=True)
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for sentencia in nodo[2]:
-                analizar(sentencia)
-    elif tipo == 'switch':
-        # Analizar expresión del switch
-        if len(nodo) > 1:
-            analizar_valor(nodo[1], verificar_existencia=True)
-        # Analizar casos
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for caso in nodo[2]:
-                analizar(caso)
-    elif tipo == 'case':
-        # Analizar valor del caso
-        if len(nodo) > 1:
-            analizar_valor(nodo[1], verificar_existencia=True)
-        # Analizar cuerpo del caso
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for sentencia in nodo[2]:
-                analizar(sentencia)
-    elif tipo == 'default':
-        # Analizar cuerpo del default
-        if len(nodo) > 1 and isinstance(nodo[1], list):
-            for sentencia in nodo[1]:
-                analizar(sentencia)
-    elif tipo in ('break', 'continue'):
-        # break y continue no requieren análisis adicional
-        pass
-    elif tipo == 'class':
-        # Analizar definición de clase
-        # Las clases se manejan de forma básica
-        pass
-    elif tipo == 'new':
-        # Instanciación de objetos
-        # new Clase(args)
-        pass
-    elif tipo == 'return':
-        # Analizar valor de retorno
-        if len(nodo) > 1 and nodo[1]:
-            analizar_valor(nodo[1], verificar_existencia=True)
-    elif tipo == 'for':
-        # Analizar inicialización, condición, incremento y cuerpo
-        # La inicialización del for declara la variable
-        if len(nodo) > 1 and nodo[1]:
-            analizar(nodo[1])  # inicialización (ej: $i = 1)
-        if len(nodo) > 2 and nodo[2]:
-            analizar_valor(nodo[2], verificar_existencia=True)  # condición
-        if len(nodo) > 3 and nodo[3]:
-            analizar(nodo[3])  # incremento
-        if len(nodo) > 4 and isinstance(nodo[4], list):
-            for sentencia in nodo[4]:
-                analizar(sentencia)
-    elif tipo in ('incremento', 'decremento', 'post_incremento', 'post_decremento'):
-        # Operaciones de incremento/decremento (++, --)
-        if len(nodo) > 1:
-            analizar_valor(nodo[1], verificar_existencia=True)
-    elif tipo == 'asignacion':
-        # Asignaciones dentro de expresiones (ej: $i = $i + 1)
-        if len(nodo) >= 3:
-            nombre_var = nodo[1]
-            valor = nodo[2]
-            # Si la variable no existe, la creamos
-            if not obtener_variable(nombre_var):
-                tipo_valor = analizar_valor(valor, verificar_existencia=True)
-                if en_ambito_local():
-                    tabla_simbolos['locales'][-1][nombre_var] = (tipo_valor, None)
-                else:
-                    tabla_simbolos['globales'][nombre_var] = (tipo_valor, None)
-            else:
-                # Si existe, solo verificamos el valor
-                analizar_valor(valor, verificar_existencia=True)
-
-
-def analizar_programa(ast):
-    global errores_semanticos
-    errores_semanticos = []
-    tabla_simbolos['globales'].clear()
-    tabla_simbolos['locales'].clear()
-    tabla_simbolos['constantes'].clear()
-
-    if not ast:
-        return True
-
-    for sentencia in ast:
-        if sentencia:
-            analizar(sentencia)
-
-    if errores_semanticos:
-        print(f"\n{'='*50}")
-        print(f"Se encontraron {len(errores_semanticos)} errores semánticos")
-        print(f"{'='*50}\n")
-        return False
-
-    print(f"\n{'='*50}")
-    print("Análisis semántico completado sin errores")
-    print(f"{'='*50}\n")
-    return True):
+        if len(nodo) >= 2 and isinstance(nodo[1], str) and nodo[1].startswith('$'):
             nombre_var = nodo[1]
             if verificar_existencia:
                 if not verificar_acceso_variable(nombre_var):
@@ -485,12 +266,27 @@ def analizar_funcion(nodo):
     salir_scope_local()
 
 
+def extraer_variables_for(nodo):
+    """Extrae nombres de variables de la inicialización de un for"""
+    variables = []
+    if isinstance(nodo, tuple):
+        if len(nodo) >= 2 and isinstance(nodo[1], str) and nodo[1].startswith('$'):
+            variables.append(nodo[1])
+        elif nodo[0] in ('asignacion', 'declaracion'):
+            if len(nodo) >= 2 and isinstance(nodo[1], str):
+                variables.append(nodo[1])
+    elif isinstance(nodo, list):
+        for item in nodo:
+            variables.extend(extraer_variables_for(item))
+    return variables
+
+
 def analizar(nodo):
     if not nodo or not isinstance(nodo, tuple):
         return
 
     tipo = nodo[0]
-
+    
     if tipo == 'declaracion':
         declarar_variable(nodo)
     elif tipo == 'declaraciones_multiples':
@@ -555,47 +351,63 @@ def analizar(nodo):
         pass
     elif tipo == 'class':
         # Analizar definición de clase
-        # Las clases se manejan de forma básica
         pass
     elif tipo == 'new':
         # Instanciación de objetos
-        # new Clase(args)
         pass
     elif tipo == 'return':
         # Analizar valor de retorno
         if len(nodo) > 1 and nodo[1]:
             analizar_valor(nodo[1], verificar_existencia=True)
     elif tipo == 'for':
-        # Analizar inicialización, condición, incremento y cuerpo
-        # La inicialización del for declara la variable
+        # Pre-declarar variables del for antes de analizar
         if len(nodo) > 1 and nodo[1]:
-            analizar(nodo[1])  # inicialización (ej: $i = 1)
+            variables_for = extraer_variables_for(nodo[1])
+            for var_name in variables_for:
+                if en_ambito_local():
+                    tabla_simbolos['locales'][-1][var_name] = ('int', None)
+                else:
+                    tabla_simbolos['globales'][var_name] = ('int', None)
+        
+        # Analizar inicialización
+        if len(nodo) > 1 and nodo[1]:
+            analizar(nodo[1])
+        
+        # Analizar condición
         if len(nodo) > 2 and nodo[2]:
-            analizar_valor(nodo[2], verificar_existencia=True)  # condición
+            analizar_valor(nodo[2], verificar_existencia=True)
+        
+        # Analizar incremento
         if len(nodo) > 3 and nodo[3]:
-            analizar(nodo[3])  # incremento
+            analizar(nodo[3])
+        
+        # Analizar cuerpo
         if len(nodo) > 4 and isinstance(nodo[4], list):
             for sentencia in nodo[4]:
                 analizar(sentencia)
     elif tipo in ('incremento', 'decremento', 'post_incremento', 'post_decremento'):
-        # Operaciones de incremento/decremento (++, --)
+        # Operaciones de incremento/decremento
         if len(nodo) > 1:
-            analizar_valor(nodo[1], verificar_existencia=True)
+            variable = nodo[1]
+            if isinstance(variable, str) and variable.startswith('$'):
+                if not obtener_variable(variable):
+                    verificar_acceso_variable(variable)
+            else:
+                analizar_valor(variable, verificar_existencia=True)
     elif tipo == 'asignacion':
-        # Asignaciones dentro de expresiones (ej: $i = $i + 1)
+        # Asignaciones dentro de expresiones
         if len(nodo) >= 3:
             nombre_var = nodo[1]
             valor = nodo[2]
-            # Si la variable no existe, la creamos
-            if not obtener_variable(nombre_var):
-                tipo_valor = analizar_valor(valor, verificar_existencia=True)
+            
+            var_existe = obtener_variable(nombre_var) is not None
+            tipo_valor = analizar_valor(valor, verificar_existencia=True)
+            
+            if not var_existe:
                 if en_ambito_local():
                     tabla_simbolos['locales'][-1][nombre_var] = (tipo_valor, None)
                 else:
                     tabla_simbolos['globales'][nombre_var] = (tipo_valor, None)
-            else:
-                # Si existe, solo verificamos el valor
-                analizar_valor(valor, verificar_existencia=True)
 
 
 def analizar_programa(ast):
