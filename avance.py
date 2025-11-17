@@ -9,12 +9,13 @@ import ply.yacc as yacc
 from datetime import datetime
 from lexico import tokens   # tu archivo de tokens
 from sintactico import parser   # tu analizador sintáctico
+from semantico import analizar_programa, errores_semanticos
 
 # ============================================================
 # FUNCIÓN PARA GENERAR LOGS
 # ============================================================
 
-def generar_log(codigo, integrante, tokens_encontrados, errores_lexicos, errores_sintacticos, resultado, usuario_git, modo):
+def generar_log(codigo, integrante, tokens_encontrados, errores_lexicos, errores_sintacticos, errores_semanticos, resultado, usuario_git, modo):
     if not os.path.exists('logs'):
         os.makedirs('logs')
 
@@ -86,6 +87,26 @@ def generar_log(codigo, integrante, tokens_encontrados, errores_lexicos, errores
         f.write("\n" + "=" * 90 + "\n")
         f.write("FIN DEL ANÁLISIS\n")
         f.write("=" * 90 + "\n")
+
+                # ---- SEMÁNTICO ----
+        if modo == "semantico":
+            f.write("═" * 90 + "\n")
+            f.write("RESULTADOS DEL ANÁLISIS SEMÁNTICO\n")
+            f.write("═" * 90 + "\n")
+
+            if errores_sintacticos:
+                f.write("✗ No se realizó análisis semántico porque el AST tiene errores.\n")
+            else:
+                if errores_semanticos:
+                    f.write(f"✗ Se detectaron {len(errores_semanticos)} errores semánticos:\n")
+                    f.write("-" * 90 + "\n")
+                    for i, e in enumerate(errores_semanticos, 1):
+                        f.write(f"{i}. {e}\n")
+                    f.write("-" * 90 + "\n")
+                else:
+                    f.write("✓ Análisis semántico completado sin errores\n")
+
+            f.write("\n")
 
     return nombre_log
 
@@ -227,14 +248,45 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
         if resultado:
             print("\n✓ Árbol sintáctico generado correctamente")
 
+        # ====== FASE SEMÁNTICA ======
+    if modo == "semantico":
+        print("\n" + "=" * 80)
+        print("Iniciando análisis semántico...\n")
+
+        import semantico
+        semantico.errores_semanticos.clear()
+
+        # Ejecutar el analizador semántico usando el AST generado
+        if resultado is None:
+            print("✗ No se pudo realizar análisis semántico porque el árbol sintáctico es inválido.")
+        else:
+            print("Procesando AST para análisis semántico...\n")
+            semantico.analizar_programa(resultado)
+
+        # Mostrar lista de errores
+        if semantico.errores_semanticos:
+            print("-" * 80)
+            print(f"✗ Errores semánticos encontrados: {len(semantico.errores_semanticos)}")
+            for i, e in enumerate(semantico.errores_semanticos, 1):
+                print(f"  {i}. {e}")
+        else:
+            print("✓ Análisis semántico completado sin errores")
+
     # ====== LOG FINAL ======
     nombre_log = generar_log(
-        codigo, integrante, tokens_encontrados, errores_lexicos,
-        sintactico.errores_sintacticos, resultado, usuario_git, modo
+        codigo,
+        integrante,
+        tokens_encontrados,
+        errores_lexicos,
+        sintactico.errores_sintacticos,
+        semantico.errores_semanticos,
+        resultado,
+        usuario_git,
+         modo
     )
-    print(f"\n✓ Log generado: logs/{nombre_log}")
+
+    print(f"\n✓ Log semántico generado: logs/{nombre_log}")
     print("=" * 80 + "\n")
-    
     return resultado
 
 # ============================================================
@@ -252,14 +304,14 @@ if __name__ == '__main__':
     if len(sys.argv) > 2:
         archivo = sys.argv[1]
         archivo = 'tests/' + archivo if not archivo.startswith('tests/') else archivo
-        modo = sys.argv[2].lower()  # lexico o sintactico
+        modo = sys.argv[2].lower()  # lexico, sintactico, semantico
     elif len(sys.argv) > 1:
         archivo = sys.argv[1]
         archivo = 'tests/' + archivo if not archivo.startswith('tests/') else archivo
         modo = 'sintactico'  # Por defecto sintáctico si solo se pasa el archivo
     else:
         archivo, nombre, usuario = usuarios_info[0]
-        modo = 'sintactico'
+        modo = 'semantico'
 
     # Determinar el usuario según el nombre del archivo
     if 'andres' in archivo.lower():
