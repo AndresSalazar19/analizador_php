@@ -1,3 +1,12 @@
+==========================================================================================
+ANÁLISIS SEMANTICO - PHP
+Integrante: Yadira Suárez
+Usuario GitHub: YadiSuarez
+Fecha y Hora: 17/11/2025 17:41:52
+==========================================================================================
+
+CÓDIGO ANALIZADO:
+------------------------------------------------------------------------------------------
 <?php
 // Variables normales y primitivas
 $bool_true = true;
@@ -23,17 +32,6 @@ echo $texto3;
 echo $cadena_doble;
 echo "Valor entero: $entero\n";
 echo 'Valor decimal: ' . $decimal . "\n";
-define("PI", 3.14);
-
-function ejemploLocal() {
-    $local = 5; // x no existe
-}
-
-function hola($nombre) {
-    return "Hola " . $nombre;
-}
-
-echo hola("Yadira");
 
 // Superglobales
 $_POST['username'] = "admin";
@@ -165,3 +163,15 @@ if ($nombre_usuario != "") {
 
 echo "Fin de análisis del algoritmo de Yadira\n";
 ?>
+
+------------------------------------------------------------------------------------------
+
+
+==========================================================================================
+FIN DEL ANÁLISIS
+==========================================================================================
+══════════════════════════════════════════════════════════════════════════════════════════
+RESULTADOS DEL ANÁLISIS SEMÁNTICO
+══════════════════════════════════════════════════════════════════════════════════════════
+✓ Análisis semántico completado sin errores
+

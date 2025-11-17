@@ -1,3 +1,12 @@
+==========================================================================================
+ANÁLISIS SEMANTICO - PHP
+Integrante: Yadira Suárez
+Usuario GitHub: YadiSuarez
+Fecha y Hora: 17/11/2025 17:46:55
+==========================================================================================
+
+CÓDIGO ANALIZADO:
+------------------------------------------------------------------------------------------
 <?php
 // Variables normales y primitivas
 $bool_true = true;
@@ -18,15 +27,19 @@ $texto3 = "Líneas múltiples
 pueden ser concatenadas
 sin problema";
 
-echo $texto3;
+echo $texto5;
 
 echo $cadena_doble;
 echo "Valor entero: $entero\n";
 echo 'Valor decimal: ' . $decimal . "\n";
 define("PI", 3.14);
+define("PI", 3.14159);
+const PI = 3.144;
+echo $GLOBALS['variable_que_no_existe'];
 
 function ejemploLocal() {
-    $local = 5; // x no existe
+    $local = 5;
+    $local_no_definida = $x + 10;  // x no existe
 }
 
 function hola($nombre) {
@@ -165,3 +178,23 @@ if ($nombre_usuario != "") {
 
 echo "Fin de análisis del algoritmo de Yadira\n";
 ?>
+
+------------------------------------------------------------------------------------------
+
+
+==========================================================================================
+FIN DEL ANÁLISIS
+==========================================================================================
+══════════════════════════════════════════════════════════════════════════════════════════
+RESULTADOS DEL ANÁLISIS SEMÁNTICO
+══════════════════════════════════════════════════════════════════════════════════════════
+✗ Se detectaron 4 errores semánticos:
+------------------------------------------------------------------------------------------
+1. variable $texto5 no está definida en el ámbito global.
+
+2. Intento de modificar constante 'PI'. Las constantes no pueden ser redefinidas.
+3. Intento de modificar constante 'PI'. Las constantes no pueden ser redefinidas.
+4. variable $variable_que_no_existe no está definida en GLOBALS.
+
+------------------------------------------------------------------------------------------
+

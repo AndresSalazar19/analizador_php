@@ -48,8 +48,7 @@ def p_sentencia(p):
                  | sentenciaFor
                  | sentenciaIf
                  | sentenciaSwitch
-                 | funcSinRet
-                 | funcConRet
+                 | funciones
                  | varSuperGlobal
                  | lecturaDatos
                  | impresion
@@ -70,14 +69,17 @@ def p_sentencia(p):
                  | BREAK SEMICOLON
                  | CONTINUE SEMICOLON
                  | VARIABLE INCREMENT SEMICOLON
-                 | callFunction SEMICOLON'''
+                 | callFunction SEMICOLON
+                 | constante'''
     p[0] = p[1]
 
 def p_define_stmt(p):
     'define_stmt : DEFINE LPAREN STRING COMMA valor RPAREN SEMICOLON'
     p[0] = ('define', p[3], p[5])
 
-
+def p_constante(p):
+    'constante : CONST ID ASSIGN valor SEMICOLON'
+    p[0] = ('Const', p[2], p[4])
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
 # Asignación por referencia
@@ -91,7 +93,7 @@ def p_asigReferencia(p):
 # Variables superglobales
 # ============================================================
 def p_varSuperGlobal(p):
-    'varSuperGlobal : SUPERGLOBALS LBRACKET STRING RBRACKET ASSIGN valor SEMICOLON'
+    'varSuperGlobal : SUPERGLOBALS LBRACKET STRING RBRACKET ASSIGN expresion SEMICOLON'
     p[0] = ('asignacion_superGlobal', p[1], p[3], p[6])
 
 # ============================================================
@@ -168,7 +170,7 @@ def p_expresion(p):
     elif len(p) == 3:
         p[0] = ('uminus', p[2])
     else:
-        p[0] = p[1]
+        p[0] = ('valor', p[1])
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
@@ -436,6 +438,12 @@ def p_listaExpresiones(p):
 # APORTE: Andrés Salazar (AndresSalazar19)
 # FUNCIONES CON RETORNO Y PARÁMETROS OBLIGATORIOS
 # ============================================================
+def p_funciones(p):
+    '''funciones : funcSinRet
+                 | funcConRet
+                 | funcConRetornoOpcional'''
+    p[0] = ('funciones', p[1])
+
 def p_funcSinRet(p):
     'funcSinRet : FUNCTION ID LPAREN parametros RPAREN LBRACE cuerpo RBRACE'
     p[0] = ('funcion_sin_retorno', p[2], p[4], p[7])
@@ -653,6 +661,7 @@ def p_valor(p):
              | SUPERGLOBALS
              | callObject
              | callFunction
+             | callSuperGlobal
              | STRING
              | BOOL_TRUE
              | BOOL_FALSE
@@ -663,13 +672,16 @@ def p_valor(p):
              | array_func'''
     p[0] = p[1]
 
+def p_callSuperGlobal(p):
+    'callSuperGlobal : SUPERGLOBALS LBRACKET STRING RBRACKET'
+    p[0] = (p[1], p[3])
+
 def p_callFunction(p):
     '''callFunction : ID LPAREN valor RPAREN
                     | ID LPAREN callFunction RPAREN'''
     
 def p_callObject(p):
-    '''callObject : SUPERGLOBALS LBRACKET valor RBRACKET
-                | VARIABLE LBRACKET valor RBRACKET'''
+    'callObject : VARIABLE LBRACKET valor RBRACKET'
     
 def p_array_func(p):
     '''array_func : ARRAY LPAREN array_content RPAREN
