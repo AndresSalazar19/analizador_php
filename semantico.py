@@ -68,8 +68,9 @@ def verificar_acceso_variable(nombre):
     else:
         if nombre in tabla_simbolos["globales"]:
             return True
-        agregar_error(f"variable {nombre} no está definida en el ámbito global (uso de variable no declarada).")
-        return False
+        print(f"Advertencia: variable {nombre} usada antes de ser declarada; asumiendo tipo 'desconocido'.")
+        tabla_simbolos['globales'][nombre] = ('desconocido', None)
+        return True
 
 
 def tipos_compatibles_aritmetica(tipo1, tipo2):
@@ -178,11 +179,14 @@ def analizar_valor(nodo, verificar_existencia=True):
         
         # Llamadas a funciones
         elif tipo_nodo == 'llamada_funcion':
-            # Por ahora retornamos tipo desconocido
-            # Los argumentos se verifican
-            if len(nodo) > 2 and isinstance(nodo[2], list):
-                for arg in nodo[2]:
-                    analizar_valor(arg, verificar_existencia=True)
+            # Validar existencia y argumentos de la llamada (puede estar dentro de expresiones)
+            try:
+                analizar_llamada_funcion(nodo)
+            except Exception:
+                # En caso de forma inesperada, al menos analizar los argumentos
+                if len(nodo) > 2 and isinstance(nodo[2], list):
+                    for arg in nodo[2]:
+                        analizar_valor(arg, verificar_existencia=True)
             return 'desconocido'
         
         # Constantes
@@ -320,15 +324,31 @@ def analizar_funcion(nodo):
                 tipo_param = analizar_valor(param[2], verificar_existencia=False)
                 tabla_simbolos['locales'][-1][param[1]] = (tipo_param, param[2])
 
+    def contiene_return(obj):
+        """Busca recursivamente una sentencia 'return' dentro de la estructura."""
+        if isinstance(obj, tuple):
+            if obj and obj[0] == 'return':
+                return True
+            for item in obj[1:]:
+                if contiene_return(item):
+                    return True
+            return False
+        elif isinstance(obj, list):
+            for item in obj:
+                if contiene_return(item):
+                    return True
+            return False
+        return False
+
     if isinstance(cuerpo, list):
         for sentencia in cuerpo:
-            resultado = analizar(sentencia)
-            if tipo_funcion in ['funcion_con_retorno', 'funcion_parametros_opcionales']:
-                if isinstance(sentencia, tuple) and sentencia[0] == 'return':
-                    tiene_retorno = True
+            analizar(sentencia)
+
+        if tipo_funcion in ['funcion_con_retorno', 'funcion_parametros_opcionales']:
+            tiene_retorno = contiene_return(cuerpo)
 
     if tipo_funcion == 'funcion_con_retorno' and not tiene_retorno:
-        agregar_error(f"La función '{nombre_funcion}' debe tener al menos una sentencia return.\n")
+        print(f"Advertencia: La función '{nombre_funcion}' no parece contener 'return'.")
 
     salir_scope_local()
     
@@ -344,29 +364,53 @@ def verificar_llamada_funcion(nombre_funcion):
 
 
 def analizar_llamada_funcion(nodo):
+    # Soporta dos formas de nodo:
+    # ('llamada_funcion', nombre, [args...])  -- forma producida por el parser actual
+    # (nombre, [args...])                     -- forma legacy
+    if not isinstance(nodo, tuple):
+        return
 
-    if isinstance(nodo, tuple) and len(nodo) >= 2:
+    # Determinar nombre y argumentos según la forma
+    if len(nodo) >= 1 and nodo[0] == 'llamada_funcion':
+        nombre_funcion = nodo[1] if len(nodo) > 1 else None
+        argumentos = nodo[2] if len(nodo) > 2 else []
+    else:
+        # Fallback: primer elemento como nombre
         nombre_funcion = nodo[0]
         argumentos = nodo[1] if len(nodo) > 1 else []
-        
-        verificar_llamada_funcion(nombre_funcion)
-        
-        if nombre_funcion in tabla_simbolos['funciones']:
-            funcion_info = tabla_simbolos['funciones'][nombre_funcion]
-            parametros = funcion_info.get('parametros', [])
-            
-            params_obligatorios = sum(1 for p in parametros if p[0] == 'param')
-            params_totales = len(parametros)
-            
-            if isinstance(argumentos, list):
-                num_args = len(argumentos)
-            else:
-                num_args = 1 if argumentos else 0
-            
-            if num_args < params_obligatorios:
-                agregar_error(f"La función '{nombre_funcion}' espera al menos {params_obligatorios} argumentos, se proporcionaron {num_args}.\n")
-            elif num_args > params_totales:
-                agregar_error(f"La función '{nombre_funcion}' espera máximo {params_totales} argumentos, se proporcionaron {num_args}.\n")
+
+    if not nombre_funcion or not isinstance(nombre_funcion, str):
+        return
+
+    # Analizar argumentos (existencia/tipos básicos)
+    if isinstance(argumentos, list):
+        for arg in argumentos:
+            analizar_valor(arg, verificar_existencia=True)
+    else:
+        # Si argumentos vienen como único valor
+        if argumentos:
+            analizar_valor(argumentos, verificar_existencia=True)
+
+    # Verificar existencia de la función
+    verificar_llamada_funcion(nombre_funcion)
+
+    # Si la función está registrada, comprobar número de parámetros
+    if nombre_funcion in tabla_simbolos['funciones']:
+        funcion_info = tabla_simbolos['funciones'][nombre_funcion]
+        parametros = funcion_info.get('parametros', [])
+
+        params_obligatorios = sum(1 for p in parametros if p[0] == 'param')
+        params_totales = len(parametros)
+
+        if isinstance(argumentos, list):
+            num_args = len(argumentos)
+        else:
+            num_args = 1 if argumentos else 0
+
+        if num_args < params_obligatorios:
+            agregar_error(f"La función '{nombre_funcion}' espera al menos {params_obligatorios} argumentos, se proporcionaron {num_args}.\n")
+        elif num_args > params_totales:
+            agregar_error(f"La función '{nombre_funcion}' espera máximo {params_totales} argumentos, se proporcionaron {num_args}.\n")
 
 
 def analizar_break_continue(nodo):
@@ -500,8 +544,8 @@ def analizar_clase(nodo):
     nombre_clase = nodo[1]
     clase_padre = nodo[2]
     cuerpo = nodo[3]
-    
-    if nombre_clase in tabla_simbolos['clases']:
+    existing = tabla_simbolos['clases'].get(nombre_clase)
+    if existing and not existing.get('__pre_registered__', False):
         agregar_error(f"Redeclaración de clase '{nombre_clase}'. La clase ya fue definida.\n")
         return
     
@@ -665,6 +709,7 @@ def analizar_programa(ast):
                     nombre_clase = sentencia[1]
                     if nombre_clase not in tabla_simbolos['clases']:
                         tabla_simbolos['clases'][nombre_clase] = {
+                            '__pre_registered__': True,
                             'padre': None,
                             'propiedades': {},
                             'metodos': {}

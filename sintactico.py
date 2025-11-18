@@ -66,12 +66,22 @@ def p_sentencia(p):
                  | PHP_CLOSE
                  | define_stmt
                  | RETURN expresion SEMICOLON
-                 | BREAK SEMICOLON
-                 | CONTINUE SEMICOLON
+                 | break_stmt
+                 | continue_stmt
                  | VARIABLE INCREMENT SEMICOLON
                  | callFunction SEMICOLON
                  | constante'''
     p[0] = p[1]
+
+
+def p_break_stmt(p):
+    'break_stmt : BREAK SEMICOLON'
+    p[0] = ('break',)
+
+
+def p_continue_stmt(p):
+    'continue_stmt : CONTINUE SEMICOLON'
+    p[0] = ('continue',)
 
 def p_define_stmt(p):
     'define_stmt : DEFINE LPAREN STRING COMMA valor RPAREN SEMICOLON'
@@ -677,9 +687,13 @@ def p_callSuperGlobal(p):
     p[0] = (p[1], p[3])
 
 def p_callFunction(p):
-    '''callFunction : ID LPAREN valor RPAREN
-                    | ID LPAREN callFunction RPAREN'''
-    
+    '''callFunction : ID LPAREN argumentos RPAREN
+                    | ID LPAREN RPAREN'''
+    # Genera un nodo uniforme: ('llamada_funcion', nombre, [args])
+    if len(p) == 5:
+        p[0] = ('llamada_funcion', p[1], p[3])
+    else:
+        p[0] = ('llamada_funcion', p[1], [])
 def p_callObject(p):
     'callObject : VARIABLE LBRACKET valor RBRACKET'
     
