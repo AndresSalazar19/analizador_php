@@ -209,6 +209,14 @@ def declarar_variable(nodo):
     nombre = nodo[1]
     valor = nodo[2]
 
+    if en_ambito_local():
+        if nombre in tabla_simbolos['locales'][-1]:
+            agregar_error(f"Redeclaración de variable {nombre} en el ámbito local.\n")
+    else:
+        if nombre in tabla_simbolos['globales']:
+            print(f"Advertencia: Redeclaración de variable global {nombre}")
+
+
     if verificar_globales(valor):
         return
 
@@ -564,6 +572,8 @@ def analizar(nodo):
         analizar_define(nodo)
     elif tipo == 'funciones':
         analizar_funcion(nodo[1])
+    elif tipo in ['funcion_sin_retorno', 'funcion_con_retorno', 'funcion_parametros_opcionales']:
+        analizar_funcion(nodo)
     elif tipo == 'echo':
         contenido = nodo[1]
         if isinstance(contenido, list):
