@@ -9,7 +9,16 @@
 tabla_simbolos = {
     "globales": {},
     "locales": [],
-    "constantes": {}
+    "constantes": {},
+    "funciones": {},
+    "clases": {}
+}
+
+contexto_actual = {
+    "en_bucle": 0,
+    "en_switch": 0,
+    "funcion_actual": None,
+    "tipo_retorno": None 
 }
 
 errores_semanticos = []
@@ -233,7 +242,6 @@ def declaracion_superglobal(nodo):
             tipo_valor = analizar_valor(valor, verificar_existencia=True)
             tabla_simbolos["globales"][indice] = (tipo_valor, None)
 
-
 def analizar_define(nodo):
     nombre_constante = nodo[1]
     valor = nodo[2]
@@ -245,29 +253,287 @@ def analizar_define(nodo):
     tipo_valor = analizar_valor(valor, verificar_existencia=False)
     tabla_simbolos['constantes'][nombre_constante] = (tipo_valor, valor)
 
+def registrar_funcion(nodo):
+    tipo_funcion = nodo[0]
+    nombre_funcion = nodo[1]
+    parametros = nodo[2]
+    
+    if nombre_funcion in tabla_simbolos['funciones']:
+        agregar_error(f"Redeclaración de función '{nombre_funcion}'. La función ya fue definida.\n")
+        return False
+    
+    tipo_retorno = None
+    if tipo_funcion in ['funcion_con_retorno', 'funcion_parametros_opcionales']:
+        tipo_retorno = 'mixed'
+    
+    # Registrar función
+    tabla_simbolos['funciones'][nombre_funcion] = {
+        'tipo': tipo_funcion,
+        'parametros': parametros,
+        'tipo_retorno': tipo_retorno,
+        'definida': True
+    }
+    
+    return True
 
 def analizar_funcion(nodo):
+    tipo_funcion = nodo[0]
+    nombre_funcion = nodo[1]
     parametros = nodo[2]
     cuerpo = nodo[3]
+    
+    # Registrar la función si no existe
+    if nombre_funcion not in tabla_simbolos['funciones']:
+        if not registrar_funcion(nodo):
+            return
+    
+    # Establecer contexto de función actual
+    contexto_actual['funcion_actual'] = nombre_funcion
+    
+    # Si es función con retorno, marcar que esperamos un retorno
+    if tipo_funcion in ['funcion_con_retorno', 'funcion_parametros_opcionales']:
+        contexto_actual['tipo_retorno'] = 'esperado'
+        tiene_retorno = False
+    else:
+        contexto_actual['tipo_retorno'] = None
 
     entrar_scope_local()
 
     for param in parametros:
         if param[0] == 'param':
-            tabla_simbolos['locales'][-1][param[1]] = ('desconocido', None)
+            if param[1] in tabla_simbolos['locales'][-1]:
+                agregar_error(f"Redeclaración de parámetro '{param[1]}' en función '{nombre_funcion}'.\n")
+            else:
+                tabla_simbolos['locales'][-1][param[1]] = ('desconocido', None)
         elif param[0] == 'param_default':
-            tipo_param = analizar_valor(param[2], verificar_existencia=False)
-            tabla_simbolos['locales'][-1][param[1]] = (tipo_param, param[2])
+            if param[1] in tabla_simbolos['locales'][-1]:
+                agregar_error(f"Redeclaración de parámetro '{param[1]}' en función '{nombre_funcion}'.\n")
+            else:
+                tipo_param = analizar_valor(param[2], verificar_existencia=False)
+                tabla_simbolos['locales'][-1][param[1]] = (tipo_param, param[2])
 
     if isinstance(cuerpo, list):
         for sentencia in cuerpo:
-            analizar(sentencia)
+            resultado = analizar(sentencia)
+            if tipo_funcion in ['funcion_con_retorno', 'funcion_parametros_opcionales']:
+                if isinstance(sentencia, tuple) and sentencia[0] == 'return':
+                    tiene_retorno = True
+
+    if tipo_funcion == 'funcion_con_retorno' and not tiene_retorno:
+        agregar_error(f"La función '{nombre_funcion}' debe tener al menos una sentencia return.\n")
 
     salir_scope_local()
+    
+    contexto_actual['funcion_actual'] = None
+    contexto_actual['tipo_retorno'] = None
 
+def verificar_llamada_funcion(nombre_funcion):
+
+    if nombre_funcion not in tabla_simbolos['funciones']:
+        agregar_error(f"Uso de función no definida '{nombre_funcion}'.\n")
+        return False
+    return True
+
+
+def analizar_llamada_funcion(nodo):
+
+    if isinstance(nodo, tuple) and len(nodo) >= 2:
+        nombre_funcion = nodo[0]
+        argumentos = nodo[1] if len(nodo) > 1 else []
+        
+        verificar_llamada_funcion(nombre_funcion)
+        
+        if nombre_funcion in tabla_simbolos['funciones']:
+            funcion_info = tabla_simbolos['funciones'][nombre_funcion]
+            parametros = funcion_info.get('parametros', [])
+            
+            params_obligatorios = sum(1 for p in parametros if p[0] == 'param')
+            params_totales = len(parametros)
+            
+            if isinstance(argumentos, list):
+                num_args = len(argumentos)
+            else:
+                num_args = 1 if argumentos else 0
+            
+            if num_args < params_obligatorios:
+                agregar_error(f"La función '{nombre_funcion}' espera al menos {params_obligatorios} argumentos, se proporcionaron {num_args}.\n")
+            elif num_args > params_totales:
+                agregar_error(f"La función '{nombre_funcion}' espera máximo {params_totales} argumentos, se proporcionaron {num_args}.\n")
+
+
+def analizar_break_continue(nodo):
+
+    tipo = nodo[0]
+    
+    if tipo == 'break':
+        if contexto_actual['en_bucle'] == 0 and contexto_actual['en_switch'] == 0:
+            agregar_error("Sentencia 'break' fuera de contexto. Debe estar dentro de un bucle o switch.\n")
+    elif tipo == 'continue':
+        if contexto_actual['en_bucle'] == 0:
+            agregar_error("Sentencia 'continue' fuera de contexto. Debe estar dentro de un bucle.\n")
+
+
+def analizar_return(nodo):
+
+    if contexto_actual['funcion_actual'] is None:
+        agregar_error("Sentencia 'return' fuera de una función.\n")
+        return
+    
+    if len(nodo) > 1:
+        valor_retorno = nodo[1]
+        tipo_retorno = analizar_valor(valor_retorno)
+        
+        if contexto_actual['funcion_actual'] in tabla_simbolos['funciones']:
+            funcion_info = tabla_simbolos['funciones'][contexto_actual['funcion_actual']]
+            tipo_esperado = funcion_info.get('tipo_retorno')
+            
+            if tipo_esperado and tipo_esperado != 'mixed':
+                if tipo_retorno != tipo_esperado and tipo_retorno != 'desconocido':
+                    agregar_error(f"Tipo de retorno incorrecto en función '{contexto_actual['funcion_actual']}'. "
+                                  f"Se esperaba '{tipo_esperado}', se retornó '{tipo_retorno}'.\n")
+
+
+def analizar_estructura_control(nodo):
+
+    tipo = nodo[0]
+    
+    if tipo == 'if':
+        condicion = nodo[1]
+        cuerpo_if = nodo[2]
+        elseifs = nodo[3] if len(nodo) > 3 else None
+        cuerpo_else = nodo[4] if len(nodo) > 4 else None
+        
+        analizar_valor(condicion)
+
+        if isinstance(cuerpo_if, list):
+            for sentencia in cuerpo_if:
+                analizar(sentencia)
+        
+        if elseifs:
+            for elseif in elseifs:
+                if elseif[0] == 'elseif':
+                    analizar_valor(elseif[1]) 
+                    if isinstance(elseif[2], list):
+                        for sentencia in elseif[2]:
+                            analizar(sentencia)
+        
+        if cuerpo_else and isinstance(cuerpo_else, list):
+            for sentencia in cuerpo_else:
+                analizar(sentencia)
+    
+    elif tipo in ['while', 'for', 'foreach']:
+        contexto_actual['en_bucle'] += 1
+        
+        if tipo == 'while':
+            condicion = nodo[1]
+            cuerpo = nodo[2]
+            analizar_valor(condicion)
+        elif tipo == 'for':
+            init = nodo[1]
+            condicion = nodo[2]
+            incremento = nodo[3]
+            cuerpo = nodo[4]
+            if init:
+                analizar(init)
+            if condicion:
+                analizar_valor(condicion)
+            if incremento:
+                analizar(incremento)
+        elif tipo == 'foreach':
+            array_var = nodo[1]
+            key_var = nodo[2]
+            value_var = nodo[3]
+            cuerpo = nodo[4]
+            
+            verificar_acceso_variable(array_var)
+            
+            entrar_scope_local()
+            if key_var:
+                tabla_simbolos['locales'][-1][key_var] = ('mixed', None)
+            tabla_simbolos['locales'][-1][value_var] = ('mixed', None)
+        
+        if isinstance(cuerpo, list):
+            for sentencia in cuerpo:
+                analizar(sentencia)
+        
+        if tipo == 'foreach':
+            salir_scope_local()
+        
+        contexto_actual['en_bucle'] -= 1
+    
+    elif tipo == 'switch':
+        contexto_actual['en_switch'] += 1
+        
+        expresion = nodo[1]
+        casos = nodo[2] if len(nodo) > 2 else []
+        default = nodo[3] if len(nodo) > 3 else None
+        
+        analizar_valor(expresion)
+        
+        for caso in casos:
+            if caso[0] == 'case':
+                valor_caso = caso[1]
+                cuerpo_caso = caso[2]
+                analizar_valor(valor_caso, verificar_existencia=False)
+                if isinstance(cuerpo_caso, list):
+                    for sentencia in cuerpo_caso:
+                        analizar(sentencia)
+        
+        if default and default[0] == 'default':
+            cuerpo_default = default[1]
+            if isinstance(cuerpo_default, list):
+                for sentencia in cuerpo_default:
+                    analizar(sentencia)
+        
+        contexto_actual['en_switch'] -= 1
+
+
+def analizar_clase(nodo):
+    nombre_clase = nodo[1]
+    clase_padre = nodo[2]
+    cuerpo = nodo[3]
+    
+    if nombre_clase in tabla_simbolos['clases']:
+        agregar_error(f"Redeclaración de clase '{nombre_clase}'. La clase ya fue definida.\n")
+        return
+    
+    if clase_padre and clase_padre not in tabla_simbolos['clases']:
+        agregar_error(f"La clase '{nombre_clase}' intenta heredar de '{clase_padre}' que no está definida.\n")
+    
+    tabla_simbolos['clases'][nombre_clase] = {
+        'padre': clase_padre,
+        'propiedades': {},
+        'metodos': {}
+    }
+    
+    if isinstance(cuerpo, list):
+        for elemento in cuerpo:
+            if elemento[0] == 'propiedad':
+                visibilidad = elemento[1]
+                nombre_prop = elemento[2]
+                valor = elemento[3] if len(elemento) > 3 else None
+                
+                if nombre_prop in tabla_simbolos['clases'][nombre_clase]['propiedades']:
+                    agregar_error(f"Redeclaración de propiedad '{nombre_prop}' en clase '{nombre_clase}'.\n")
+                else:
+                    tabla_simbolos['clases'][nombre_clase]['propiedades'][nombre_prop] = {
+                        'visibilidad': visibilidad,
+                        'tipo': analizar_valor(valor, verificar_existencia=False) if valor else 'mixed'
+                    }
+            
+            elif elemento[0] in ['metodo', 'constructor']:
+                visibilidad = elemento[1]
+                nombre_metodo = '__construct' if elemento[0] == 'constructor' else elemento[2]
+                
+                if nombre_metodo in tabla_simbolos['clases'][nombre_clase]['metodos']:
+                    agregar_error(f"Redeclaración de método '{nombre_metodo}' en clase '{nombre_clase}'.\n")
+                else:
+                    tabla_simbolos['clases'][nombre_clase]['metodos'][nombre_metodo] = {
+                        'visibilidad': visibilidad,
+                        'tipo': elemento[0]
+                    }
 
 def extraer_variables_for(nodo):
-    """Extrae nombres de variables de la inicialización de un for"""
     variables = []
     if isinstance(nodo, tuple):
         if len(nodo) >= 2 and isinstance(nodo[1], str) and nodo[1].startswith('$'):
@@ -305,86 +571,34 @@ def analizar(nodo):
                 analizar_valor(expr, verificar_existencia=True)
         else:
             analizar_valor(contenido, verificar_existencia=True)
-    elif tipo in ('if', 'elseif'):
-        # Analizar condición
-        analizar_valor(nodo[1], verificar_existencia=True)
-        # Analizar cuerpo
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for sentencia in nodo[2]:
-                analizar(sentencia)
-        # Si hay else, analizarlo
-        if len(nodo) > 3 and nodo[3]:
-            analizar(nodo[3])
-    elif tipo == 'else':
-        # Analizar cuerpo del else
-        if len(nodo) > 1 and isinstance(nodo[1], list):
-            for sentencia in nodo[1]:
-                analizar(sentencia)
-    elif tipo == 'while':
-        analizar_valor(nodo[1], verificar_existencia=True)
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for sentencia in nodo[2]:
-                analizar(sentencia)
-    elif tipo == 'switch':
-        # Analizar expresión del switch
-        if len(nodo) > 1:
-            analizar_valor(nodo[1], verificar_existencia=True)
-        # Analizar casos
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for caso in nodo[2]:
-                analizar(caso)
-    elif tipo == 'case':
-        # Analizar valor del caso
-        if len(nodo) > 1:
-            analizar_valor(nodo[1], verificar_existencia=True)
-        # Analizar cuerpo del caso
-        if len(nodo) > 2 and isinstance(nodo[2], list):
-            for sentencia in nodo[2]:
-                analizar(sentencia)
-    elif tipo == 'default':
-        # Analizar cuerpo del default
-        if len(nodo) > 1 and isinstance(nodo[1], list):
-            for sentencia in nodo[1]:
-                analizar(sentencia)
-    elif tipo in ('break', 'continue'):
-        # break y continue no requieren análisis adicional
-        pass
-    elif tipo == 'class':
-        # Analizar definición de clase
-        pass
-    elif tipo == 'new':
-        # Instanciación de objetos
-        pass
+    elif tipo in ['break', 'continue']:
+        analizar_break_continue(nodo)
     elif tipo == 'return':
-        # Analizar valor de retorno
-        if len(nodo) > 1 and nodo[1]:
-            analizar_valor(nodo[1], verificar_existencia=True)
-    elif tipo == 'for':
-        # Pre-declarar variables del for antes de analizar
-        if len(nodo) > 1 and nodo[1]:
-            variables_for = extraer_variables_for(nodo[1])
-            for var_name in variables_for:
+        analizar_return(nodo)
+    elif tipo in ['if', 'while', 'for', 'foreach', 'switch']:
+        analizar_estructura_control(nodo)
+    elif tipo == 'clase':
+        analizar_clase(nodo)
+    elif tipo == 'llamada_funcion':
+        analizar_llamada_funcion(nodo)
+    elif tipo == 'callFunction':
+        # Verificar llamada a función
+        if len(nodo) > 0:
+            verificar_llamada_funcion(nodo[0])
+    elif tipo == 'asignacion_instancia':
+        nombre_var = nodo[1]
+        instancia = nodo[2]
+        if instancia[0] == 'instancia':
+            nombre_clase = instancia[1]
+            # Verificar que la clase existe
+            if nombre_clase not in tabla_simbolos['clases']:
+                agregar_error(f"Intento de instanciar clase no definida '{nombre_clase}'.\n")
+            else:
+                # Registrar la variable con el tipo de la clase
                 if en_ambito_local():
-                    tabla_simbolos['locales'][-1][var_name] = ('int', None)
+                    tabla_simbolos['locales'][-1][nombre_var] = (nombre_clase, None)
                 else:
-                    tabla_simbolos['globales'][var_name] = ('int', None)
-        
-        # Analizar inicialización
-        if len(nodo) > 1 and nodo[1]:
-            analizar(nodo[1])
-        
-        # Analizar condición
-        if len(nodo) > 2 and nodo[2]:
-            analizar_valor(nodo[2], verificar_existencia=True)
-        
-        # Analizar incremento
-        if len(nodo) > 3 and nodo[3]:
-            analizar(nodo[3])
-        
-        # Analizar cuerpo
-        if len(nodo) > 4 and isinstance(nodo[4], list):
-            for sentencia in nodo[4]:
-                analizar(sentencia)
+                    tabla_simbolos['globales'][nombre_var] = (nombre_clase, None)
     elif tipo in ('incremento', 'decremento', 'post_incremento', 'post_decremento'):
         # Operaciones de incremento/decremento
         if len(nodo) > 1:
@@ -416,9 +630,35 @@ def analizar_programa(ast):
     tabla_simbolos['globales'].clear()
     tabla_simbolos['locales'].clear()
     tabla_simbolos['constantes'].clear()
+    tabla_simbolos['funciones'].clear()
+    tabla_simbolos['clases'].clear()
+
+    contexto_actual['en_bucle'] = 0
+    contexto_actual['en_switch'] = 0
+    contexto_actual['funcion_actual'] = None
+    contexto_actual['tipo_retorno'] = None
 
     if not ast:
         return True
+
+    for sentencia in ast:
+        if sentencia:
+            if isinstance(sentencia, tuple):
+                if sentencia[0] == 'funciones' and len(sentencia) > 1:
+                    funcion = sentencia[1]
+                    if isinstance(funcion, tuple) and len(funcion) >= 4:
+                        registrar_funcion(funcion)
+                elif sentencia[0] in ['funcion_sin_retorno', 'funcion_con_retorno', 'funcion_parametros_opcionales']:
+                    registrar_funcion(sentencia)
+                elif sentencia[0] == 'clase':
+                    # Pre-registrar clase para permitir referencias circulares
+                    nombre_clase = sentencia[1]
+                    if nombre_clase not in tabla_simbolos['clases']:
+                        tabla_simbolos['clases'][nombre_clase] = {
+                            'padre': None,
+                            'propiedades': {},
+                            'metodos': {}
+                        }
 
     for sentencia in ast:
         if sentencia:
@@ -428,9 +668,16 @@ def analizar_programa(ast):
         print(f"\n{'='*50}")
         print(f"Se encontraron {len(errores_semanticos)} errores semánticos")
         print(f"{'='*50}\n")
+        for i, error in enumerate(errores_semanticos, 1):
+            print(f"{i}. {error}")
         return False
 
     print(f"\n{'='*50}")
     print("Análisis semántico completado sin errores")
+    print(f"{'='*50}")
+    print(f"Variables globales: {len(tabla_simbolos['globales'])}")
+    print(f"Funciones definidas: {len(tabla_simbolos['funciones'])}")
+    print(f"Clases definidas: {len(tabla_simbolos['clases'])}")
+    print(f"Constantes definidas: {len(tabla_simbolos['constantes'])}")
     print(f"{'='*50}\n")
     return True

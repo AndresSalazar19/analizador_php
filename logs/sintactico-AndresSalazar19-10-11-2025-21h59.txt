@@ -1,0 +1,620 @@
+==========================================================================================
+ANÁLISIS SINTACTICO - PHP
+Integrante: Andrés Salazar
+Usuario GitHub: AndresSalazar19
+Fecha y Hora: 10/11/2025 21:59:16
+==========================================================================================
+
+CÓDIGO ANALIZADO:
+------------------------------------------------------------------------------------------
+<?php
+
+$numero1 = 85;
+$numero2 = 90;
+$numero3 = 78;
+$total = 0;
+$promedio = 0.0;
+$contador = 3;
+
+$suma = $numero1 + $numero2;
+$resta = $numero1 - $numero3;
+$multiplicacion = $numero2 * 2;
+$division = $suma / $contador;
+$modulo = $numero1 % 10;
+$potencia = 2 ** 3;
+
+$total = $numero1 + $numero2 + $numero3;
+$promedio = $total / $contador;
+
+echo "Calculadora de Promedios\n";
+echo "========================\n\n";
+
+if ($promedio >= 90) {
+    echo "Excelente rendimiento!\n";
+    $calificacion = "A";
+} elseif ($promedio >= 80) {
+    echo "Buen rendimiento\n";
+    $calificacion = "B";
+} elseif ($promedio >= 70) {
+    echo "Rendimiento aceptable\n";
+    $calificacion = "C";
+} else {
+    echo "Necesita mejorar\n";
+    $calificacion = "F";
+}
+
+$es_mayor = $numero1 > $numero2;
+$es_menor = $numero1 < $numero3;
+$es_igual = $numero1 == 85;
+$es_identico = $numero1 === 85;
+$es_diferente = $numero1 != $numero2;
+$mayor_o_igual = $promedio >= 80;
+$menor_o_igual = $promedio <= 100;
+
+echo "\nEstadísticas:\n";
+echo "Total: " . $total . "\n";
+echo "Promedio: " . $promedio . "\n";
+echo "Calificación: " . $calificacion . "\n";
+
+echo "\nDesglose de notas:\n";
+for ($i = 1; $i <= $contador; $i++) {
+    echo "Nota " . $i . ": ";
+    
+    switch ($i) {
+        case 1:
+            echo $numero1 . "\n";
+            break;
+        case 2:
+            echo $numero2 . "\n";
+            break;
+        case 3:
+            echo $numero3 . "\n";
+            break;
+        default:
+            echo "N/A\n";
+    }
+}
+
+$intentos = 0;
+while ($intentos < 3) {
+    $intentos = $intentos + 1;
+    echo "Intento " . $intentos . "\n";
+    
+    if ($intentos == 2) {
+        continue;
+    }
+}
+
+$notas = array($numero1, $numero2, $numero3);
+$estudiante = array("nombre" => "Juan", "edad" => 20);
+
+define("NOTA_MINIMA", 60);
+define("NOTA_MAXIMA", 100);
+
+if ($promedio > NOTA_MINIMA && $promedio <= NOTA_MAXIMA) {
+    echo "\nEl promedio está en el rango válido\n";
+}
+
+$resultado1 = (10 + 5) * 2;
+$resultado2 = 10 + (5 * 2);
+$resultado3 = ((15 - 5) / 2) + 3;
+
+$aprobado = true;
+$reprobado = false;
+$sin_calificar = null;
+
+function calcular_promedio($n1, $n2, $n3) {
+    $suma_total = $n1 + $n2 + $n3;
+    return $suma_total / 3;
+}
+
+class Estudiante {
+    public $nombre;
+    public $edad;
+    private $promedio;
+    
+    function __construct($n, $e) {
+        $this->nombre = $n;
+        $this->edad = $e;
+    }
+}
+
+$est1 = new Estudiante("María", 21);
+
+echo "\n¡Análisis completado!\n";
+
+?>
+------------------------------------------------------------------------------------------
+
+══════════════════════════════════════════════════════════════════════════════════════════
+RESULTADOS DEL ANÁLISIS LÉXICO
+══════════════════════════════════════════════════════════════════════════════════════════
+Tokens reconocidos: 470
+Errores léxicos: 0
+------------------------------------------------------------------------------------------
+#     TIPO                 VALOR                          LÍNEA     
+------------------------------------------------------------------------------------------
+1     PHP_OPEN             <?php                          1         
+2     VARIABLE             $numero1                       3         
+3     ASSIGN               =                              3         
+4     INTEGER              85                             3         
+5     SEMICOLON            ;                              3         
+6     VARIABLE             $numero2                       4         
+7     ASSIGN               =                              4         
+8     INTEGER              90                             4         
+9     SEMICOLON            ;                              4         
+10    VARIABLE             $numero3                       5         
+11    ASSIGN               =                              5         
+12    INTEGER              78                             5         
+13    SEMICOLON            ;                              5         
+14    VARIABLE             $total                         6         
+15    ASSIGN               =                              6         
+16    INTEGER              0                              6         
+17    SEMICOLON            ;                              6         
+18    VARIABLE             $promedio                      7         
+19    ASSIGN               =                              7         
+20    FLOAT                0.0                            7         
+21    SEMICOLON            ;                              7         
+22    VARIABLE             $contador                      8         
+23    ASSIGN               =                              8         
+24    INTEGER              3                              8         
+25    SEMICOLON            ;                              8         
+26    VARIABLE             $suma                          10        
+27    ASSIGN               =                              10        
+28    VARIABLE             $numero1                       10        
+29    PLUS                 +                              10        
+30    VARIABLE             $numero2                       10        
+31    SEMICOLON            ;                              10        
+32    VARIABLE             $resta                         11        
+33    ASSIGN               =                              11        
+34    VARIABLE             $numero1                       11        
+35    MINUS                -                              11        
+36    VARIABLE             $numero3                       11        
+37    SEMICOLON            ;                              11        
+38    VARIABLE             $multiplicacion                12        
+39    ASSIGN               =                              12        
+40    VARIABLE             $numero2                       12        
+41    TIMES                *                              12        
+42    INTEGER              2                              12        
+43    SEMICOLON            ;                              12        
+44    VARIABLE             $division                      13        
+45    ASSIGN               =                              13        
+46    VARIABLE             $suma                          13        
+47    DIVIDE               /                              13        
+48    VARIABLE             $contador                      13        
+49    SEMICOLON            ;                              13        
+50    VARIABLE             $modulo                        14        
+51    ASSIGN               =                              14        
+52    VARIABLE             $numero1                       14        
+53    MOD                  %                              14        
+54    INTEGER              10                             14        
+55    SEMICOLON            ;                              14        
+56    VARIABLE             $potencia                      15        
+57    ASSIGN               =                              15        
+58    INTEGER              2                              15        
+59    POW                  **                             15        
+60    INTEGER              3                              15        
+61    SEMICOLON            ;                              15        
+62    VARIABLE             $total                         17        
+63    ASSIGN               =                              17        
+64    VARIABLE             $numero1                       17        
+65    PLUS                 +                              17        
+66    VARIABLE             $numero2                       17        
+67    PLUS                 +                              17        
+68    VARIABLE             $numero3                       17        
+69    SEMICOLON            ;                              17        
+70    VARIABLE             $promedio                      18        
+71    ASSIGN               =                              18        
+72    VARIABLE             $total                         18        
+73    DIVIDE               /                              18        
+74    VARIABLE             $contador                      18        
+75    SEMICOLON            ;                              18        
+76    ECHO                 echo                           20        
+77    STRING               Calculadora de Promedios\n     20        
+78    SEMICOLON            ;                              20        
+79    ECHO                 echo                           21        
+80    STRING               ========================\n\... 21        
+81    SEMICOLON            ;                              21        
+82    IF                   if                             23        
+83    LPAREN               (                              23        
+84    VARIABLE             $promedio                      23        
+85    GE                   >=                             23        
+86    INTEGER              90                             23        
+87    RPAREN               )                              23        
+88    LBRACE               {                              23        
+89    ECHO                 echo                           24        
+90    STRING               Excelente rendimiento!\n       24        
+91    SEMICOLON            ;                              24        
+92    VARIABLE             $calificacion                  25        
+93    ASSIGN               =                              25        
+94    STRING               A                              25        
+95    SEMICOLON            ;                              25        
+96    RBRACE               }                              26        
+97    ELSEIF               elseif                         26        
+98    LPAREN               (                              26        
+99    VARIABLE             $promedio                      26        
+100   GE                   >=                             26        
+101   INTEGER              80                             26        
+102   RPAREN               )                              26        
+103   LBRACE               {                              26        
+104   ECHO                 echo                           27        
+105   STRING               Buen rendimiento\n             27        
+106   SEMICOLON            ;                              27        
+107   VARIABLE             $calificacion                  28        
+108   ASSIGN               =                              28        
+109   STRING               B                              28        
+110   SEMICOLON            ;                              28        
+111   RBRACE               }                              29        
+112   ELSEIF               elseif                         29        
+113   LPAREN               (                              29        
+114   VARIABLE             $promedio                      29        
+115   GE                   >=                             29        
+116   INTEGER              70                             29        
+117   RPAREN               )                              29        
+118   LBRACE               {                              29        
+119   ECHO                 echo                           30        
+120   STRING               Rendimiento aceptable\n        30        
+121   SEMICOLON            ;                              30        
+122   VARIABLE             $calificacion                  31        
+123   ASSIGN               =                              31        
+124   STRING               C                              31        
+125   SEMICOLON            ;                              31        
+126   RBRACE               }                              32        
+127   ELSE                 else                           32        
+128   LBRACE               {                              32        
+129   ECHO                 echo                           33        
+130   STRING               Necesita mejorar\n             33        
+131   SEMICOLON            ;                              33        
+132   VARIABLE             $calificacion                  34        
+133   ASSIGN               =                              34        
+134   STRING               F                              34        
+135   SEMICOLON            ;                              34        
+136   RBRACE               }                              35        
+137   VARIABLE             $es_mayor                      37        
+138   ASSIGN               =                              37        
+139   VARIABLE             $numero1                       37        
+140   GT                   >                              37        
+141   VARIABLE             $numero2                       37        
+142   SEMICOLON            ;                              37        
+143   VARIABLE             $es_menor                      38        
+144   ASSIGN               =                              38        
+145   VARIABLE             $numero1                       38        
+146   LT                   <                              38        
+147   VARIABLE             $numero3                       38        
+148   SEMICOLON            ;                              38        
+149   VARIABLE             $es_igual                      39        
+150   ASSIGN               =                              39        
+151   VARIABLE             $numero1                       39        
+152   EQ                   ==                             39        
+153   INTEGER              85                             39        
+154   SEMICOLON            ;                              39        
+155   VARIABLE             $es_identico                   40        
+156   ASSIGN               =                              40        
+157   VARIABLE             $numero1                       40        
+158   IDENTICAL            ===                            40        
+159   INTEGER              85                             40        
+160   SEMICOLON            ;                              40        
+161   VARIABLE             $es_diferente                  41        
+162   ASSIGN               =                              41        
+163   VARIABLE             $numero1                       41        
+164   NE                   !=                             41        
+165   VARIABLE             $numero2                       41        
+166   SEMICOLON            ;                              41        
+167   VARIABLE             $mayor_o_igual                 42        
+168   ASSIGN               =                              42        
+169   VARIABLE             $promedio                      42        
+170   GE                   >=                             42        
+171   INTEGER              80                             42        
+172   SEMICOLON            ;                              42        
+173   VARIABLE             $menor_o_igual                 43        
+174   ASSIGN               =                              43        
+175   VARIABLE             $promedio                      43        
+176   LE                   <=                             43        
+177   INTEGER              100                            43        
+178   SEMICOLON            ;                              43        
+179   ECHO                 echo                           45        
+180   STRING               \nEstadísticas:\n              45        
+181   SEMICOLON            ;                              45        
+182   ECHO                 echo                           46        
+183   STRING               Total:                         46        
+184   DOT                  .                              46        
+185   VARIABLE             $total                         46        
+186   DOT                  .                              46        
+187   STRING               \n                             46        
+188   SEMICOLON            ;                              46        
+189   ECHO                 echo                           47        
+190   STRING               Promedio:                      47        
+191   DOT                  .                              47        
+192   VARIABLE             $promedio                      47        
+193   DOT                  .                              47        
+194   STRING               \n                             47        
+195   SEMICOLON            ;                              47        
+196   ECHO                 echo                           48        
+197   STRING               Calificación:                  48        
+198   DOT                  .                              48        
+199   VARIABLE             $calificacion                  48        
+200   DOT                  .                              48        
+201   STRING               \n                             48        
+202   SEMICOLON            ;                              48        
+203   ECHO                 echo                           50        
+204   STRING               \nDesglose de notas:\n         50        
+205   SEMICOLON            ;                              50        
+206   FOR                  for                            51        
+207   LPAREN               (                              51        
+208   VARIABLE             $i                             51        
+209   ASSIGN               =                              51        
+210   INTEGER              1                              51        
+211   SEMICOLON            ;                              51        
+212   VARIABLE             $i                             51        
+213   LE                   <=                             51        
+214   VARIABLE             $contador                      51        
+215   SEMICOLON            ;                              51        
+216   VARIABLE             $i                             51        
+217   INCREMENT            ++                             51        
+218   RPAREN               )                              51        
+219   LBRACE               {                              51        
+220   ECHO                 echo                           52        
+221   STRING               Nota                           52        
+222   DOT                  .                              52        
+223   VARIABLE             $i                             52        
+224   DOT                  .                              52        
+225   STRING               :                              52        
+226   SEMICOLON            ;                              52        
+227   SWITCH               switch                         54        
+228   LPAREN               (                              54        
+229   VARIABLE             $i                             54        
+230   RPAREN               )                              54        
+231   LBRACE               {                              54        
+232   CASE                 case                           55        
+233   INTEGER              1                              55        
+234   COLON                :                              55        
+235   ECHO                 echo                           56        
+236   VARIABLE             $numero1                       56        
+237   DOT                  .                              56        
+238   STRING               \n                             56        
+239   SEMICOLON            ;                              56        
+240   BREAK                break                          57        
+241   SEMICOLON            ;                              57        
+242   CASE                 case                           58        
+243   INTEGER              2                              58        
+244   COLON                :                              58        
+245   ECHO                 echo                           59        
+246   VARIABLE             $numero2                       59        
+247   DOT                  .                              59        
+248   STRING               \n                             59        
+249   SEMICOLON            ;                              59        
+250   BREAK                break                          60        
+251   SEMICOLON            ;                              60        
+252   CASE                 case                           61        
+253   INTEGER              3                              61        
+254   COLON                :                              61        
+255   ECHO                 echo                           62        
+256   VARIABLE             $numero3                       62        
+257   DOT                  .                              62        
+258   STRING               \n                             62        
+259   SEMICOLON            ;                              62        
+260   BREAK                break                          63        
+261   SEMICOLON            ;                              63        
+262   DEFAULT              default                        64        
+263   COLON                :                              64        
+264   ECHO                 echo                           65        
+265   STRING               N/A\n                          65        
+266   SEMICOLON            ;                              65        
+267   RBRACE               }                              66        
+268   RBRACE               }                              67        
+269   VARIABLE             $intentos                      69        
+270   ASSIGN               =                              69        
+271   INTEGER              0                              69        
+272   SEMICOLON            ;                              69        
+273   WHILE                while                          70        
+274   LPAREN               (                              70        
+275   VARIABLE             $intentos                      70        
+276   LT                   <                              70        
+277   INTEGER              3                              70        
+278   RPAREN               )                              70        
+279   LBRACE               {                              70        
+280   VARIABLE             $intentos                      71        
+281   ASSIGN               =                              71        
+282   VARIABLE             $intentos                      71        
+283   PLUS                 +                              71        
+284   INTEGER              1                              71        
+285   SEMICOLON            ;                              71        
+286   ECHO                 echo                           72        
+287   STRING               Intento                        72        
+288   DOT                  .                              72        
+289   VARIABLE             $intentos                      72        
+290   DOT                  .                              72        
+291   STRING               \n                             72        
+292   SEMICOLON            ;                              72        
+293   IF                   if                             74        
+294   LPAREN               (                              74        
+295   VARIABLE             $intentos                      74        
+296   EQ                   ==                             74        
+297   INTEGER              2                              74        
+298   RPAREN               )                              74        
+299   LBRACE               {                              74        
+300   CONTINUE             continue                       75        
+301   SEMICOLON            ;                              75        
+302   RBRACE               }                              76        
+303   RBRACE               }                              77        
+304   VARIABLE             $notas                         79        
+305   ASSIGN               =                              79        
+306   ARRAY                array                          79        
+307   LPAREN               (                              79        
+308   VARIABLE             $numero1                       79        
+309   COMMA                ,                              79        
+310   VARIABLE             $numero2                       79        
+311   COMMA                ,                              79        
+312   VARIABLE             $numero3                       79        
+313   RPAREN               )                              79        
+314   SEMICOLON            ;                              79        
+315   VARIABLE             $estudiante                    80        
+316   ASSIGN               =                              80        
+317   ARRAY                array                          80        
+318   LPAREN               (                              80        
+319   STRING               nombre                         80        
+320   ARROW                =>                             80        
+321   STRING               Juan                           80        
+322   COMMA                ,                              80        
+323   STRING               edad                           80        
+324   ARROW                =>                             80        
+325   INTEGER              20                             80        
+326   RPAREN               )                              80        
+327   SEMICOLON            ;                              80        
+328   DEFINE               define                         82        
+329   LPAREN               (                              82        
+330   STRING               NOTA_MINIMA                    82        
+331   COMMA                ,                              82        
+332   INTEGER              60                             82        
+333   RPAREN               )                              82        
+334   SEMICOLON            ;                              82        
+335   DEFINE               define                         83        
+336   LPAREN               (                              83        
+337   STRING               NOTA_MAXIMA                    83        
+338   COMMA                ,                              83        
+339   INTEGER              100                            83        
+340   RPAREN               )                              83        
+341   SEMICOLON            ;                              83        
+342   IF                   if                             85        
+343   LPAREN               (                              85        
+344   VARIABLE             $promedio                      85        
+345   GT                   >                              85        
+346   ID                   NOTA_MINIMA                    85        
+347   AND_OP               &&                             85        
+348   VARIABLE             $promedio                      85        
+349   LE                   <=                             85        
+350   ID                   NOTA_MAXIMA                    85        
+351   RPAREN               )                              85        
+352   LBRACE               {                              85        
+353   ECHO                 echo                           86        
+354   STRING               \nEl promedio está en el ra... 86        
+355   SEMICOLON            ;                              86        
+356   RBRACE               }                              87        
+357   VARIABLE             $resultado1                    89        
+358   ASSIGN               =                              89        
+359   LPAREN               (                              89        
+360   INTEGER              10                             89        
+361   PLUS                 +                              89        
+362   INTEGER              5                              89        
+363   RPAREN               )                              89        
+364   TIMES                *                              89        
+365   INTEGER              2                              89        
+366   SEMICOLON            ;                              89        
+367   VARIABLE             $resultado2                    90        
+368   ASSIGN               =                              90        
+369   INTEGER              10                             90        
+370   PLUS                 +                              90        
+371   LPAREN               (                              90        
+372   INTEGER              5                              90        
+373   TIMES                *                              90        
+374   INTEGER              2                              90        
+375   RPAREN               )                              90        
+376   SEMICOLON            ;                              90        
+377   VARIABLE             $resultado3                    91        
+378   ASSIGN               =                              91        
+379   LPAREN               (                              91        
+380   LPAREN               (                              91        
+381   INTEGER              15                             91        
+382   MINUS                -                              91        
+383   INTEGER              5                              91        
+384   RPAREN               )                              91        
+385   DIVIDE               /                              91        
+386   INTEGER              2                              91        
+387   RPAREN               )                              91        
+388   PLUS                 +                              91        
+389   INTEGER              3                              91        
+390   SEMICOLON            ;                              91        
+391   VARIABLE             $aprobado                      93        
+392   ASSIGN               =                              93        
+393   BOOL_TRUE            True                           93        
+394   SEMICOLON            ;                              93        
+395   VARIABLE             $reprobado                     94        
+396   ASSIGN               =                              94        
+397   BOOL_FALSE           False                          94        
+398   SEMICOLON            ;                              94        
+399   VARIABLE             $sin_calificar                 95        
+400   ASSIGN               =                              95        
+401   NULL                 None                           95        
+402   SEMICOLON            ;                              95        
+403   FUNCTION             function                       97        
+404   ID                   calcular_promedio              97        
+405   LPAREN               (                              97        
+406   VARIABLE             $n1                            97        
+407   COMMA                ,                              97        
+408   VARIABLE             $n2                            97        
+409   COMMA                ,                              97        
+410   VARIABLE             $n3                            97        
+411   RPAREN               )                              97        
+412   LBRACE               {                              97        
+413   VARIABLE             $suma_total                    98        
+414   ASSIGN               =                              98        
+415   VARIABLE             $n1                            98        
+416   PLUS                 +                              98        
+417   VARIABLE             $n2                            98        
+418   PLUS                 +                              98        
+419   VARIABLE             $n3                            98        
+420   SEMICOLON            ;                              98        
+421   RETURN               return                         99        
+422   VARIABLE             $suma_total                    99        
+423   DIVIDE               /                              99        
+424   INTEGER              3                              99        
+425   SEMICOLON            ;                              99        
+426   RBRACE               }                              100       
+427   CLASS                class                          102       
+428   ID                   Estudiante                     102       
+429   LBRACE               {                              102       
+430   PUBLIC               public                         103       
+431   VARIABLE             $nombre                        103       
+432   SEMICOLON            ;                              103       
+433   PUBLIC               public                         104       
+434   VARIABLE             $edad                          104       
+435   SEMICOLON            ;                              104       
+436   PRIVATE              private                        105       
+437   VARIABLE             $promedio                      105       
+438   SEMICOLON            ;                              105       
+439   FUNCTION             function                       107       
+440   CONSTRUCT            __construct                    107       
+441   LPAREN               (                              107       
+442   VARIABLE             $n                             107       
+443   COMMA                ,                              107       
+444   VARIABLE             $e                             107       
+445   RPAREN               )                              107       
+446   LBRACE               {                              107       
+447   THIS_VAR             $this->nombre                  108       
+448   ASSIGN               =                              108       
+449   VARIABLE             $n                             108       
+450   SEMICOLON            ;                              108       
+451   THIS_VAR             $this->edad                    109       
+452   ASSIGN               =                              109       
+453   VARIABLE             $e                             109       
+454   SEMICOLON            ;                              109       
+455   RBRACE               }                              110       
+456   RBRACE               }                              111       
+457   VARIABLE             $est1                          113       
+458   ASSIGN               =                              113       
+459   NEW                  new                            113       
+460   ID                   Estudiante                     113       
+461   LPAREN               (                              113       
+462   STRING               María                          113       
+463   COMMA                ,                              113       
+464   INTEGER              21                             113       
+465   RPAREN               )                              113       
+466   SEMICOLON            ;                              113       
+467   ECHO                 echo                           115       
+468   STRING               \n¡Análisis completado!\n      115       
+469   SEMICOLON            ;                              115       
+470   PHP_CLOSE            ?>                             117       
+
+✓ Análisis léxico completado sin errores
+
+══════════════════════════════════════════════════════════════════════════════════════════
+RESULTADOS DEL ANÁLISIS SINTÁCTICO
+══════════════════════════════════════════════════════════════════════════════════════════
+✗ Se detectaron 1 errores sintácticos:
+------------------------------------------------------------------------------------------
+1. Error de sintaxis en 'define' (tipo DEFINE) en línea 82
+------------------------------------------------------------------------------------------
+
+==========================================================================================
+FIN DEL ANÁLISIS
+==========================================================================================
