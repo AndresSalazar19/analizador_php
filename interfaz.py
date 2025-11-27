@@ -318,8 +318,12 @@ class PHPAnalyzerIDE:
         )
         self.line_numbers.pack(side=tk.LEFT, fill=tk.Y)
         
-        # Editor de código
-        self.editor = scrolledtext.ScrolledText(
+        # Scrollbar vertical compartida
+        self.editor_scrollbar = tk.Scrollbar(editor_frame, orient=tk.VERTICAL)
+        self.editor_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Editor de código (Text) sincronizado con la numeración
+        self.editor = tk.Text(
             editor_frame,
             wrap=tk.NONE,
             font=('Consolas', 10),
@@ -328,13 +332,17 @@ class PHPAnalyzerIDE:
             insertbackground=self.colors['fg'],
             selectbackground='#264f78',
             relief=tk.FLAT,
-            undo=True
+            undo=True,
+            yscrollcommand=self._on_editor_scroll
         )
         self.editor.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.editor_scrollbar.config(command=self._on_scrollbar)
         
         # Vincular eventos
         self.editor.bind('<KeyRelease>', self.update_line_numbers)
-        self.editor.bind('<MouseWheel>', self.update_line_numbers)
+        # Sincronizar scroll con rueda del mouse en ambos widgets
+        self.editor.bind('<MouseWheel>', self._on_mousewheel_sync)
+        self.line_numbers.bind('<MouseWheel>', self._on_mousewheel_sync)
         
         # Código inicial
         codigo_ejemplo = '''<?php
@@ -357,17 +365,44 @@ for ($i = 0; $i < 5; $i++) {
         self.update_line_numbers()
         
         return panel
+
+    # --- Sincronización de scroll editor <-> numeración ---
+    def _on_scrollbar(self, *args):
+        # Desplaza ambos widgets cuando se usa la barra
+        self.editor.yview(*args)
+        self.line_numbers.yview(*args)
+
+    def _on_editor_scroll(self, first, last):
+        # Actualiza barra y numeración cuando el editor hace scroll
+        try:
+            self.editor_scrollbar.set(first, last)
+        except Exception:
+            pass
+        # Mueve numeración al mismo offset
+        self.line_numbers.yview_moveto(first)
+        return 'break'
+
+    def _on_mousewheel_sync(self, event):
+        # Windows: delta en múltiplos de 120
+        delta = -1 * int(event.delta / 120)
+        self.editor.yview_scroll(delta, 'units')
+        self.line_numbers.yview_scroll(delta, 'units')
+        return 'break'
     
     def update_line_numbers(self, event=None):
-        """Actualiza los números de línea"""
+        """Actualiza los números de línea sin perder posición de scroll"""
+        # Guardar posición actual
+        first, _ = self.line_numbers.yview()
         self.line_numbers.config(state='normal')
         self.line_numbers.delete('1.0', tk.END)
-        
+
         line_count = self.editor.get('1.0', tk.END).count('\n')
         line_numbers_string = "\n".join(str(i) for i in range(1, line_count + 1))
-        
+
         self.line_numbers.insert('1.0', line_numbers_string)
         self.line_numbers.config(state='disabled')
+        # Restaurar posición
+        self.line_numbers.yview_moveto(first)
         
     def create_results_panel(self):
         """Crea el panel de resultados con pestañas"""
