@@ -96,6 +96,7 @@ reserved_zahid = {
     'const': 'CONST',
     'use': 'USE',
     'as': 'AS',
+    'readline': 'READLINE'
 }
 
 #Tokens Zahid
@@ -125,9 +126,6 @@ tokens_yadira = [
     'INTEGER',           # 123
     'FLOAT',             # 123.45
     'AMPERSAND',        # &
-    'READLINE',
-    'FGETS',
-    'STDIN',
 
     # Operadores lógicos
     'AND_OP',             # && or 'and'
@@ -207,9 +205,7 @@ t_COLON = r':'
 t_DOT = r'\.'
 t_ASSIGN = r'='
 t_AMPERSAND = r'&'
-t_READLINE = r'readline'
-t_FGETS = r'fgets'
-t_STDIN = r'STDIN'
+
 
 # Primero verificar superglobales
 def t_SUPERGLOBALS(t):

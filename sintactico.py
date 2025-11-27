@@ -649,12 +649,9 @@ def p_lecturaDatos(p):
     p[0] = ('lectura_datos', p[1], p[3])
 
 def p_funcionLectura(p):
-    '''funcionLectura : READLINE LPAREN STRING RPAREN
-                      | FGETS LPAREN STDIN RPAREN'''
-    if p[1].lower() == 'readline':
-        p[0] = ('readline', p[3])   # Ej: readline("Ingresa tu nombre: ")
-    else:
-        p[0] = ('fgets', 'STDIN')   # Ej: fgets(STDIN)
+    'funcionLectura : READLINE LPAREN STRING RPAREN'
+    p[0] = ('readline', p[3])   
+    
 
 # ============================================================
 # VALORES Y CUERPO

@@ -34,7 +34,7 @@ function hola($nombre) {
 }
 
 echo hola("Yadira");
-
+echo (4+5);
 // Superglobales
 $_POST['username'] = "admin";
 $_POST['clave'] = "1234";
@@ -153,8 +153,8 @@ echo "Fin de análisis del algoritmo de Yadira";
 
 
 // Ingreso por teclado CLI
-echo "Ingrese su nombre: ";
-$nombre_usuario = trim(fgets(STDIN));
+$nombre_usuario = "";
+$nombre_usuario = readline("Ingrese su nombre: ");
 
 if ($nombre_usuario != "") {
     echo "Bienvenido, $nombre_usuario!\n";
