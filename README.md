@@ -92,7 +92,7 @@ os                  # Operaciones del sistema (incluida en Python estándar)
 sys                 # Sistema (incluida en Python estándar)
 ```
 
-### Método 1: Desde un IDE
+### Ejecutar: Desde un IDE
 1. Abrir `interfaz.py` en tu IDE favorito (PyCharm, VS Code, etc.)
 2. Ejecutar el archivo directamente
 
@@ -190,13 +190,6 @@ analisis-completo-usuario-DD-MM-YYYY-HHhMM.txt
 - Deshacer/Rehacer (`Ctrl+Z`, `Ctrl+Y`)
 - Código de ejemplo al iniciar
 
-
-## 📞 Contacto y Soporte
-
-Para consultas o problemas con el proyecto, contactar a cualquiera de los integrantes:
-- Andrés Salazar: @AndresSalazar19
-- Yadira Suarez: @YadiSuarez
-- Zahid Díaz: @LockHurb
 
 ## 📄 Licencia
 
