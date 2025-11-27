@@ -1051,10 +1051,6 @@ for ($i = 0; $i < 5; $i++) {
         else:
             self.errors_text.insert(tk.END, "✓ No se encontraron errores semánticos.\n")
         
-        # Mostrar tabla de símbolos al final
-        self.errors_text.insert(tk.END, "\n" + "═" * 90 + "\n")
-        self.errors_text.insert(tk.END, "TABLA DE SÍMBOLOS\n")
-        self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
         
         self.errors_text.insert(tk.END, f"Variables globales: {len(tabla_simbolos['globales'])}\n")
         self.errors_text.insert(tk.END, f"Funciones: {len(tabla_simbolos['funciones'])}\n")
@@ -1125,10 +1121,6 @@ for ($i = 0; $i < 5; $i++) {
         else:
             self.errors_text.insert(tk.END, "✓ No se encontraron errores semánticos.\n\n")
 
-        # Tabla de símbolos
-        self.errors_text.insert(tk.END, "" + "═" * 90 + "\n")
-        self.errors_text.insert(tk.END, "TABLA DE SÍMBOLOS\n")
-        self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
         self.errors_text.insert(tk.END, f"Variables globales: {len(tabla_simbolos['globales'])}\n")
         self.errors_text.insert(tk.END, f"Funciones: {len(tabla_simbolos['funciones'])}\n")
         self.errors_text.insert(tk.END, f"Clases: {len(tabla_simbolos['clases'])}\n")
@@ -1268,10 +1260,6 @@ for ($i = 0; $i < 5; $i++) {
                         else:
                             f.write(f"\n{i}. {error}\n")
                 
-                # Tabla de símbolos
-                f.write("\n" + "═" * 90 + "\n")
-                f.write("TABLA DE SÍMBOLOS\n")
-                f.write("═" * 90 + "\n")
                 from semantico import tabla_simbolos
                 f.write(f"Variables globales: {len(tabla_simbolos['globales'])}\n")
                 f.write(f"Funciones: {len(tabla_simbolos['funciones'])}\n")
