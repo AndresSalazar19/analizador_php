@@ -87,7 +87,7 @@ def verificar_acceso_variable(nombre, linea=None):
     else:
         if nombre in tabla_simbolos["globales"]:
             return True
-        print(f"Advertencia: variable {nombre} usada antes de ser declarada; asumiendo tipo 'desconocido'.")
+        agregar_error(f"Advertencia: variable {nombre} usada antes de ser declarada; asumiendo tipo 'desconocido'.")
         tabla_simbolos['globales'][nombre] = ('desconocido', None)
         return True
 
@@ -223,7 +223,7 @@ def verificar_globales(valor):
         superglobal, indice = valor[1][0], "$" + valor[1][1]
         if superglobal == 'GLOBALS':
             if indice not in tabla_simbolos['globales']:
-                agregar_error(f"variable {indice} no está definida en GLOBALS.")
+                agregar_error(f"Advertencia: variable {indice} no está definida en GLOBALS.")
             return True
     return False
 
@@ -235,9 +235,6 @@ def declarar_variable(nodo):
     if en_ambito_local():
         if nombre in tabla_simbolos['locales'][-1]:
             agregar_error(f"Redeclaración de variable {nombre} en el ámbito local.\n")
-    else:
-        if nombre in tabla_simbolos['globales']:
-            print(f"Advertencia: Redeclaración de variable global {nombre}")
 
 
     if verificar_globales(valor):
@@ -367,7 +364,7 @@ def analizar_funcion(nodo):
             tiene_retorno = contiene_return(cuerpo)
 
     if tipo_funcion == 'funcion_con_retorno' and not tiene_retorno:
-        print(f"Advertencia: La función '{nombre_funcion}' no parece contener 'return'.")
+        agregar_error(f"Advertencia: La función '{nombre_funcion}' no parece contener 'return'.")
 
     salir_scope_local()
     
@@ -505,7 +502,7 @@ def analizar_estructura_control(nodo):
             incremento = nodo[3]
             cuerpo = nodo[4]
             if init:
-                analizar(init)
+                declarar_variable(init)
             if condicion:
                 analizar_valor(condicion)
             if incremento:
@@ -539,8 +536,6 @@ def analizar_estructura_control(nodo):
         casos = nodo[2] if len(nodo) > 2 else []
         default = nodo[3] if len(nodo) > 3 else None
         
-        analizar_valor(expresion)
-        
         for caso in casos:
             if caso[0] == 'case':
                 valor_caso = caso[1]
@@ -570,7 +565,7 @@ def analizar_clase(nodo):
     
     if clase_padre and clase_padre not in tabla_simbolos['clases']:
         agregar_error(f"La clase '{nombre_clase}' intenta heredar de '{clase_padre}' que no está definida.\n")
-    
+
     tabla_simbolos['clases'][nombre_clase] = {
         'padre': clase_padre,
         'propiedades': {},
@@ -695,7 +690,13 @@ def analizar(nodo):
                     tabla_simbolos['locales'][-1][nombre_var] = (tipo_valor, None)
                 else:
                     tabla_simbolos['globales'][nombre_var] = (tipo_valor, None)
-
+    elif tipo == 'asignacion_array':
+        nombre = nodo[1]
+        if en_ambito_local():
+            tabla_simbolos['locales'][-1][nombre] = ('array', None)
+        else:
+            tabla_simbolos['globales'][nombre] = ('array', None)
+        
 
 def analizar_programa(ast):
     global errores_semanticos

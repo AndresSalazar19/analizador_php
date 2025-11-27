@@ -65,7 +65,6 @@ def p_sentencia(p):
                  | PHP_OPEN
                  | PHP_CLOSE
                  | define_stmt
-                 | RETURN expresion SEMICOLON
                  | break_stmt
                  | continue_stmt
                  | VARIABLE INCREMENT SEMICOLON
@@ -463,13 +462,10 @@ def p_funcConRet(p):
     p[0] = ('funcion_con_retorno', p[2], p[4], p[7])
 
 def p_cuerpoConRetorno(p):
-    '''cuerpoConRetorno : sentencia
-                        | sentencia cuerpoConRetorno
+    '''cuerpoConRetorno : cuerpo RETURN expresion SEMICOLON
                         | RETURN expresion SEMICOLON'''
-    if len(p) == 2:
-        p[0] = [p[1]]
-    elif len(p) == 3:
-        p[0] = [p[1]] + p[2]
+    if len(p) == 5:
+        p[0] = p[1] + [('return', p[3])]
     else:
         p[0] = [('return', p[2])]
 
@@ -748,8 +744,7 @@ def p_array_element(p):
         
 def p_cuerpo(p):
     '''cuerpo : sentencia
-              | sentencia cuerpo
-              | '''
+              | sentencia cuerpo '''
     if len(p) == 1:
         p[0] = []
     elif len(p) == 2:
