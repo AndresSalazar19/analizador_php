@@ -326,9 +326,19 @@ t_ignore = ' \t'
 # Manejo de errores
 errores = []
 def t_error(t):
-    mensaje = f"Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'"
+    mensaje = (
+        f"Error LÉXICO en línea {t.lineno}, columna {t.lexpos}:\n"
+        f"  → Caracter ilegal '{t.value[0]}' (código ASCII: {ord(t.value[0])})\n"
+        f"  → Explicación: Caracter no reconocido por el analizador léxico"
+    )
     print(mensaje)
-    errores.append(mensaje)
+    errores.append({
+        'tipo': 'LÉXICO',
+        'linea': t.lineno,
+        'columna': t.lexpos,
+        'mensaje': f"Caracter ilegal '{t.value[0]}'",
+        'explicacion': "Caracter no reconocido por el analizador léxico"
+    })
     t.lexer.skip(1)
 
 # ============================================================

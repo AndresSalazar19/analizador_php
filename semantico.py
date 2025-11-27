@@ -23,9 +23,20 @@ contexto_actual = {
 
 errores_semanticos = []
 
-def agregar_error(mensaje):
-    errores_semanticos.append(mensaje)
-    print(f"Error semántico: {mensaje}")
+def agregar_error(mensaje, linea=None, contexto=None):
+    error = {
+        'tipo': 'SEMÁNTICO',
+        'linea': linea if linea else 'desconocida',
+        'mensaje': mensaje,
+        'contexto': contexto
+    }
+    errores_semanticos.append(error)
+    
+    # Formatear salida
+    print(f"\nError SEMÁNTICO en línea {error['linea']}:")
+    print(f"  → {mensaje}")
+    if contexto:
+        print(f"  → Contexto: {contexto}")
 
 def en_ambito_local():
     return len(tabla_simbolos["locales"]) > 0
@@ -55,15 +66,23 @@ def obtener_variable(nombre):
     return tabla_simbolos["globales"].get(nombre)
 
 
-def verificar_acceso_variable(nombre):
+def verificar_acceso_variable(nombre, linea=None):
     """Verifica si una variable existe y es accesible en el ámbito actual"""
     if en_ambito_local():
         if nombre in tabla_simbolos["locales"][-1]:
             return True
         if nombre in tabla_simbolos["globales"]:
-            agregar_error(f"variable {nombre} debe ser accedida con $GLOBALS['{nombre}'].")
+            agregar_error(
+                f"Variable {nombre} debe ser accedida con $GLOBALS['{nombre}']",
+                linea,
+                "Intento de acceder a variable global desde ámbito local"
+            )
             return False
-        agregar_error(f"variable {nombre} no está definida (uso de variable no declarada).")
+        agregar_error(
+            f"Variable {nombre} no está definida (uso de variable no declarada)",
+            linea,
+            "La variable no existe en el ámbito actual"
+        )
         return False
     else:
         if nombre in tabla_simbolos["globales"]:
@@ -94,7 +113,7 @@ def obtener_tipo_resultado_aritmetico(tipo1, tipo2):
     return 'desconocido'
 
 
-def analizar_operacion_aritmetica(nodo, operador):
+def analizar_operacion_aritmetica(nodo, operador, linea=None):
     """Analiza operaciones aritméticas y verifica compatibilidad de tipos"""
     if len(nodo) < 3:
         return 'desconocido'
@@ -105,16 +124,16 @@ def analizar_operacion_aritmetica(nodo, operador):
     tipo_izq = analizar_valor(operando_izq, verificar_existencia=True)
     tipo_der = analizar_valor(operando_der, verificar_existencia=True)
     
-    # Verificar compatibilidad de tipos
     if not tipos_compatibles_aritmetica(tipo_izq, tipo_der):
         agregar_error(
-            f"operación aritmética '{operador}' con tipos incompatibles: "
-            f"{tipo_izq} {operador} {tipo_der}. "
-            f"Solo se permiten operaciones entre int y float."
+            f"Operación aritmética '{operador}' con tipos incompatibles: {tipo_izq} {operador} {tipo_der}",
+            linea,
+            "Solo se permiten operaciones aritméticas entre int y float"
         )
         return 'desconocido'
     
     return obtener_tipo_resultado_aritmetico(tipo_izq, tipo_der)
+
 
 
 def analizar_operacion_comparacion(nodo, operador):

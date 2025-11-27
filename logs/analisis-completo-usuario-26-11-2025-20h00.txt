@@ -1,0 +1,169 @@
+==========================================================================================
+ANÁLISIS COMPLETO - PHP
+Fecha y Hora: 26/11/2025 20:00:21
+==========================================================================================
+
+CÓDIGO ANALIZADO:
+------------------------------------------------------------------------------------------
+<?php
+// Ejemplo de código PHP
+$nombre = "Juan";
+$edad = 25;
+
+if ($edad >= 18) {
+    echo "Hola " . $nombre;
+    echo "Eres mayor de edad";
+} else {
+    echo "Eres menor de edad";
+}
+
+for ($i = 0; $i < 5; $i++) {
+    echo $i;
+}
+?>
+
+------------------------------------------------------------------------------------------
+
+══════════════════════════════════════════════════════════════════════════════════════════
+ANÁLISIS LÉXICO
+══════════════════════════════════════════════════════════════════════════════════════════
+Tokens encontrados: 50
+Errores léxicos: 0
+------------------------------------------------------------------------------------------
+1      PHP_OPEN                  <?php                               1         
+2      VARIABLE                  $nombre                             3         
+3      ASSIGN                    =                                   3         
+4      STRING                    Juan                                3         
+5      SEMICOLON                 ;                                   3         
+6      VARIABLE                  $edad                               4         
+7      ASSIGN                    =                                   4         
+8      INTEGER                   25                                  4         
+9      SEMICOLON                 ;                                   4         
+10     IF                        if                                  6         
+11     LPAREN                    (                                   6         
+12     VARIABLE                  $edad                               6         
+13     GE                        >=                                  6         
+14     INTEGER                   18                                  6         
+15     RPAREN                    )                                   6         
+16     LBRACE                    {                                   6         
+17     ECHO                      echo                                7         
+18     STRING                    Hola                                7         
+19     DOT                       .                                   7         
+20     VARIABLE                  $nombre                             7         
+21     SEMICOLON                 ;                                   7         
+22     ECHO                      echo                                8         
+23     STRING                    Eres mayor de edad                  8         
+24     SEMICOLON                 ;                                   8         
+25     RBRACE                    }                                   9         
+26     ELSE                      else                                9         
+27     LBRACE                    {                                   9         
+28     ECHO                      echo                                10        
+29     STRING                    Eres menor de edad                  10        
+30     SEMICOLON                 ;                                   10        
+31     RBRACE                    }                                   11        
+32     FOR                       for                                 13        
+33     LPAREN                    (                                   13        
+34     VARIABLE                  $i                                  13        
+35     ASSIGN                    =                                   13        
+36     INTEGER                   0                                   13        
+37     SEMICOLON                 ;                                   13        
+38     VARIABLE                  $i                                  13        
+39     LT                        <                                   13        
+40     INTEGER                   5                                   13        
+41     SEMICOLON                 ;                                   13        
+42     VARIABLE                  $i                                  13        
+43     INCREMENT                 ++                                  13        
+44     RPAREN                    )                                   13        
+45     LBRACE                    {                                   13        
+46     ECHO                      echo                                14        
+47     VARIABLE                  $i                                  14        
+48     SEMICOLON                 ;                                   14        
+49     RBRACE                    }                                   15        
+50     PHP_CLOSE                 ?>                                  16        
+
+══════════════════════════════════════════════════════════════════════════════════════════
+ANÁLISIS SINTÁCTICO
+══════════════════════════════════════════════════════════════════════════════════════════
+✓ Sin errores sintácticos
+
+ÁRBOL SINTÁCTICO:
+[
+  ├─ '<?php'
+  ├─ (declaracion
+    ├─ '$nombre'
+    └─ (valor
+      └─ 'Juan'
+    )
+  )
+  ├─ (declaracion
+    ├─ '$edad'
+    └─ (valor
+      └─ 25
+    )
+  )
+  ├─ (if
+    ├─ (>=
+      ├─ '$edad'
+      └─ 18
+    )
+    ├─ [
+      ├─ (echo
+        └─ (.
+          ├─ (valor
+            └─ 'Hola '
+          )
+          └─ (valor
+            └─ '$nombre'
+          )
+        )
+      )
+      └─ (echo
+        └─ 'Eres mayor de edad'
+      )
+    ]
+    └─ [
+      └─ (echo
+        └─ 'Eres menor de edad'
+      )
+    ]
+  )
+  ├─ (for
+    ├─ (init
+      ├─ '$i'
+      └─ (valor
+        └─ 0
+      )
+    )
+    ├─ (<
+      ├─ '$i'
+      └─ 5
+    )
+    ├─ (inc
+      ├─ '$i'
+      └─ '++'
+    )
+    └─ [
+      └─ (echo
+        └─ (valor
+          └─ '$i'
+        )
+      )
+    ]
+  )
+  └─ '?>'
+]
+
+══════════════════════════════════════════════════════════════════════════════════════════
+ANÁLISIS SEMÁNTICO
+══════════════════════════════════════════════════════════════════════════════════════════
+✓ Sin errores semánticos
+
+TABLA DE SÍMBOLOS:
+Variables globales: 3
+Funciones: 0
+Clases: 0
+Constantes: 0
+
+==========================================================================================
+FIN DEL ANÁLISIS
+==========================================================================================

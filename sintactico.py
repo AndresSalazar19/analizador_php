@@ -764,13 +764,30 @@ errores_sintacticos = []
 
 def p_error(p):
     if p:
-        mensaje = f"Error de sintaxis en '{p.value}' (tipo {p.type}) en línea {p.lineno}"
+        mensaje = {
+            'tipo': 'SINTÁCTICO',
+            'linea': p.lineno,
+            'token': p.value,
+            'tipo_token': p.type,
+            'mensaje': f"Token inesperado '{p.value}' de tipo {p.type}",
+            'explicacion': "El token no encaja en ninguna regla gramatical válida en este contexto"
+        }
         errores_sintacticos.append(mensaje)
-        print(mensaje)
+        print(f"Error SINTÁCTICO en línea {p.lineno}:")
+        print(f"  → Token inesperado: '{p.value}' (tipo: {p.type})")
+        print(f"  → Explicación: {mensaje['explicacion']}")
     else:
-        mensaje = "Error de sintaxis: fin inesperado del archivo"
+        mensaje = {
+            'tipo': 'SINTÁCTICO',
+            'linea': 'EOF',
+            'token': None,
+            'mensaje': "Fin inesperado del archivo",
+            'explicacion': "El archivo terminó antes de completar una estructura sintáctica válida"
+        }
         errores_sintacticos.append(mensaje)
-        print(mensaje)
+        print(f"Error SINTÁCTICO al final del archivo:")
+        print(f"  → {mensaje['mensaje']}")
+        print(f"  → Explicación: {mensaje['explicacion']}")
 
 # ============================================================
 # CONSTRUCCIÓN DEL PARSER
