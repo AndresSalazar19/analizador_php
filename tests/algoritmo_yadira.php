@@ -109,7 +109,6 @@ $materias = [
 ];
 
 echo "Nombre: " . $estudiante["nombre"] . "\n";
-echo "Nota de Matemáticas: " . $materias["matematicas"] . "\n";
 
 // Bucle While
 $contador = 0;
