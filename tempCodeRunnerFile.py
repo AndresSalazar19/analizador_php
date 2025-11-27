@@ -1,3 +1,4 @@
+
 def exportar_reporte(self):
         """Exporta un reporte completo del análisis con errores mejorados"""
         if not self.tokens_encontrados:
