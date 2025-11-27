@@ -34,7 +34,6 @@ function hola($nombre) {
 }
 
 echo hola("Yadira");
-echo (4+5);
 // Superglobales
 $_POST['username'] = "admin";
 $_POST['clave'] = "1234";
