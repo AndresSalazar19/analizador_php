@@ -782,14 +782,16 @@ for ($i = 0; $i < 5; $i++) {
                     fg=self.colors['error']
                 )
                 self.update_status(f"Análisis sintáctico completado con {len(sintactico.errores_sintacticos)} errores", "warning")
+                # Si hay errores, mostrar la pestaña de Errores
+                self.notebook.select(2)
             else:
                 self.status_sintactico_label.config(
                     text="✓ Análisis sintáctico completado sin errores",
                     fg=self.colors['success']
                 )
                 self.update_status("Análisis sintáctico completado exitosamente", "success")
-                
-            self.notebook.select(1)  # Mostrar pestaña de árbol
+                # Si no hay errores, mostrar el árbol
+                self.notebook.select(1)
             
         except Exception as e:
             messagebox.showerror("Error", f"Error en análisis sintáctico:\n{str(e)}")
@@ -820,7 +822,8 @@ for ($i = 0; $i < 5; $i++) {
             elapsed = time.time() - start_time
             
             # Mostrar resultados
-            self.mostrar_errores_semanticos()
+            # Mostrar errores combinados (sintácticos + semánticos)
+            self.mostrar_errores_totales()
             self.actualizar_estadisticas_semantico(elapsed)
             
             # Actualizar estado
@@ -837,7 +840,8 @@ for ($i = 0; $i < 5; $i++) {
                 )
                 self.update_status("Análisis semántico completado exitosamente", "success")
                 
-            self.notebook.select(2)  # Mostrar pestaña de errores
+            # Mostrar pestaña de errores (combinados)
+            self.notebook.select(2)
             
         except Exception as e:
             messagebox.showerror("Error", f"Error en análisis semántico:\n{str(e)}")
@@ -980,40 +984,120 @@ for ($i = 0; $i < 5; $i++) {
 
     
     def mostrar_errores_semanticos(self):
-            """Muestra los errores semánticos con formato mejorado"""
-            import semantico
-            from semantico import tabla_simbolos
-            
-            self.errors_text.delete('1.0', tk.END)
-            
-            # Título
-            self.errors_text.insert(tk.END, "═" * 90 + "\n")
-            self.errors_text.insert(tk.END, "ERRORES SEMÁNTICOS\n")
-            self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
-            
-            if semantico.errores_semanticos:
-                for i, error in enumerate(semantico.errores_semanticos, 1):
-                    if isinstance(error, dict):
-                        self.errors_text.insert(tk.END, f"{i}. ⚠️ Error SEMÁNTICO en línea {error['linea']}:\n")
-                        self.errors_text.insert(tk.END, f"   → {error['mensaje']}\n")
-                        if error.get('contexto'):
-                            self.errors_text.insert(tk.END, f"   → Contexto: {error['contexto']}\n")
-                        self.errors_text.insert(tk.END, "\n")
-                    else:
-                        # Formato antiguo de errores
-                        self.errors_text.insert(tk.END, f"{i}. ⚠️ {error}\n\n")
-            else:
-                self.errors_text.insert(tk.END, "✓ No se encontraron errores semánticos.\n")
-            
-            # Mostrar tabla de símbolos
-            self.errors_text.insert(tk.END, "\n" + "═" * 90 + "\n")
-            self.errors_text.insert(tk.END, "TABLA DE SÍMBOLOS\n")
-            self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
-            
-            self.errors_text.insert(tk.END, f"Variables globales: {len(tabla_simbolos['globales'])}\n")
-            self.errors_text.insert(tk.END, f"Funciones: {len(tabla_simbolos['funciones'])}\n")
-            self.errors_text.insert(tk.END, f"Clases: {len(tabla_simbolos['clases'])}\n")
-            self.errors_text.insert(tk.END, f"Constantes: {len(tabla_simbolos['constantes'])}\n")
+        """Muestra los errores semánticos con formato mejorado"""
+        import semantico
+        from semantico import tabla_simbolos
+        
+        self.errors_text.delete('1.0', tk.END)
+        
+        # Título de la sección
+        self.errors_text.insert(tk.END, "═" * 90 + "\n")
+        self.errors_text.insert(tk.END, "ERRORES SEMÁNTICOS\n")
+        self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
+        
+        if semantico.errores_semanticos:
+            for i, error in enumerate(semantico.errores_semanticos, 1):
+                if isinstance(error, dict):
+                    # Muestra: Línea, Mensaje (Por qué) y Tipo (Semántico)
+                    linea = error.get('linea', 'desconocida')
+                    mensaje = error.get('mensaje', '').strip()
+                    contexto = error.get('contexto', '')
+
+                    self.errors_text.insert(tk.END, f"{i}. ⚠️ Error SEMÁNTICO en línea {linea}:\n")
+                    self.errors_text.insert(tk.END, f"   → {mensaje}\n")
+                    
+                    if contexto:
+                        self.errors_text.insert(tk.END, f"   → Contexto: {contexto}\n")
+                    
+                    self.errors_text.insert(tk.END, "\n")
+                else:
+                    # Fallback para errores que no sean diccionarios
+                    self.errors_text.insert(tk.END, f"{i}. ⚠️ {error}\n\n")
+        else:
+            self.errors_text.insert(tk.END, "✓ No se encontraron errores semánticos.\n")
+        
+        # Mostrar tabla de símbolos al final
+        self.errors_text.insert(tk.END, "\n" + "═" * 90 + "\n")
+        self.errors_text.insert(tk.END, "TABLA DE SÍMBOLOS\n")
+        self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
+        
+        self.errors_text.insert(tk.END, f"Variables globales: {len(tabla_simbolos['globales'])}\n")
+        self.errors_text.insert(tk.END, f"Funciones: {len(tabla_simbolos['funciones'])}\n")
+        self.errors_text.insert(tk.END, f"Clases: {len(tabla_simbolos['clases'])}\n")
+        self.errors_text.insert(tk.END, f"Constantes: {len(tabla_simbolos['constantes'])}\n")
+
+    def mostrar_errores_totales(self):
+        """Muestra ambos tipos de errores (sintácticos y semánticos) juntos en la pestaña."""
+        import sintactico
+        import semantico
+        from semantico import tabla_simbolos
+
+        # Limpiar área
+        self.errors_text.delete('1.0', tk.END)
+
+        # Encabezado general
+        self.errors_text.insert(tk.END, "═" * 90 + "\n")
+        self.errors_text.insert(tk.END, "ERRORES ENCONTRADOS\n")
+        self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
+
+        # Sección: Léxicos
+        self.errors_text.insert(tk.END, "ERRORES LÉXICOS\n")
+        self.errors_text.insert(tk.END, "-" * 90 + "\n\n")
+        if self.errores_lexicos:
+            for i, error in enumerate(self.errores_lexicos, 1):
+                if isinstance(error, dict):
+                    linea = error.get('linea', 'desconocida')
+                    columna = error.get('columna', 'desconocida')
+                    mensaje = error.get('mensaje', '').strip()
+                    explicacion = error.get('explicacion', '')
+                    self.errors_text.insert(tk.END, f"{i}. ❌ Error LÉXICO en línea {linea}, columna {columna}:\n")
+                    self.errors_text.insert(tk.END, f"   → {mensaje}\n")
+                    if explicacion:
+                        self.errors_text.insert(tk.END, f"   → Explicación: {explicacion}\n")
+                    self.errors_text.insert(tk.END, "\n")
+                else:
+                    self.errors_text.insert(tk.END, f"{i}. ❌ {error}\n\n")
+        else:
+            self.errors_text.insert(tk.END, "✓ No se encontraron errores léxicos.\n\n")
+
+        # Sección: Sintácticos
+        self.errors_text.insert(tk.END, "ERRORES SINTÁCTICOS\n")
+        self.errors_text.insert(tk.END, "-" * 90 + "\n\n")
+        if sintactico.errores_sintacticos:
+            for i, error in enumerate(sintactico.errores_sintacticos, 1):
+                self.errors_text.insert(tk.END, f"{i}. ❌ Error SINTÁCTICO en línea {error['linea']}:\n")
+                self.errors_text.insert(tk.END, f"   → {error['mensaje']}\n")
+                self.errors_text.insert(tk.END, f"   → Explicación: {error['explicacion']}\n\n")
+        else:
+            self.errors_text.insert(tk.END, "✓ No se encontraron errores sintácticos.\n\n")
+
+        # Sección: Semánticos
+        self.errors_text.insert(tk.END, "ERRORES SEMÁNTICOS\n")
+        self.errors_text.insert(tk.END, "-" * 90 + "\n\n")
+        if semantico.errores_semanticos:
+            for i, error in enumerate(semantico.errores_semanticos, 1):
+                if isinstance(error, dict):
+                    linea = error.get('linea', 'desconocida')
+                    mensaje = error.get('mensaje', '').strip()
+                    contexto = error.get('contexto', '')
+                    self.errors_text.insert(tk.END, f"{i}. ⚠️ Error SEMÁNTICO en línea {linea}:\n")
+                    self.errors_text.insert(tk.END, f"   → {mensaje}\n")
+                    if contexto:
+                        self.errors_text.insert(tk.END, f"   → Contexto: {contexto}\n")
+                    self.errors_text.insert(tk.END, "\n")
+                else:
+                    self.errors_text.insert(tk.END, f"{i}. ⚠️ {error}\n\n")
+        else:
+            self.errors_text.insert(tk.END, "✓ No se encontraron errores semánticos.\n\n")
+
+        # Tabla de símbolos
+        self.errors_text.insert(tk.END, "" + "═" * 90 + "\n")
+        self.errors_text.insert(tk.END, "TABLA DE SÍMBOLOS\n")
+        self.errors_text.insert(tk.END, "═" * 90 + "\n\n")
+        self.errors_text.insert(tk.END, f"Variables globales: {len(tabla_simbolos['globales'])}\n")
+        self.errors_text.insert(tk.END, f"Funciones: {len(tabla_simbolos['funciones'])}\n")
+        self.errors_text.insert(tk.END, f"Clases: {len(tabla_simbolos['clases'])}\n")
+        self.errors_text.insert(tk.END, f"Constantes: {len(tabla_simbolos['constantes'])}\n")
 
     def actualizar_estadisticas_lexico(self, tiempo):
         """Actualiza las estadísticas después del análisis léxico"""
