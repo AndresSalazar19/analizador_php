@@ -39,9 +39,6 @@ reserved_andres = {
     'public': 'PUBLIC',
     'private': 'PRIVATE',
     'protected': 'PROTECTED',
-    'static': 'STATIC',
-    'true': 'TRUE',
-    'false': 'FALSE',
     'null': 'NULL',
     'echo': 'ECHO',
     'array': 'ARRAY',
@@ -96,24 +93,9 @@ tokens_andres = [
 
 reserved_zahid = {
     'extends': 'EXTENDS',
-    'implements': 'IMPLEMENTS',
-    'interface': 'INTERFACE',
-    'abstract': 'ABSTRACT',
-    'final': 'FINAL',
     'const': 'CONST',
-    'trait': 'TRAIT',
     'use': 'USE',
-    'namespace': 'NAMESPACE',
     'as': 'AS',
-    'instanceof': 'INSTANCEOF',
-    'throw': 'THROW',
-    'try': 'TRY',
-    'catch': 'CATCH',
-    'finally': 'FINALLY',
-    'require': 'REQUIRE',
-    'include': 'INCLUDE',
-    'require_once': 'REQUIRE_ONCE',
-    'include_once': 'INCLUDE_ONCE',
 }
 
 #Tokens Zahid
@@ -125,7 +107,6 @@ tokens_zahid = [
     'TIMES_ASSIGN',
     'DIVIDE_ASSIGN',
     'CONCAT_ASSIGN',
-    'BACKSLASH',
 ]
 
 # ============================================================
@@ -221,7 +202,6 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
-t_BACKSLASH = r'\\'
 t_COMMA = r','
 t_COLON = r':'
 t_DOT = r'\.'
@@ -341,160 +321,3 @@ def t_error(t):
     })
     t.lexer.skip(1)
 
-# ============================================================
-# CONSTRUCCIÓN DEL LEXER
-# ============================================================
-
-lexer = lex.lex()
-
-# ============================================================
-# FUNCIÓN PARA GENERAR LOGS
-# ============================================================
-
-def generar_log(codigo, integrante, tokens_encontrados, errores, usuario_git):
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
-    
-    fecha_hora = datetime.now().strftime("%d-%m-%Y-%Hh%M")
-    nombre_log = f"lexico-{usuario_git}-{fecha_hora}.txt"
-    ruta_log = os.path.join('logs', nombre_log)
-    
-    with open(ruta_log, 'w', encoding='utf-8') as f:
-        f.write("=" * 80 + "\n")
-        f.write("ANÁLISIS LÉXICO - PHP\n")
-        f.write(f"Integrante: {integrante}\n")
-        f.write(f"Usuario GitHub: {usuario_git}\n")
-        f.write(f"Fecha y Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
-        f.write("=" * 80 + "\n\n")
-        
-        f.write("CÓDIGO ANALIZADO:\n")
-        f.write("-" * 80 + "\n")
-        f.write(codigo)
-        f.write("\n" + "-" * 80 + "\n\n")
-        
-        f.write(f"TOKENS RECONOCIDOS: {len(tokens_encontrados)}\n")
-        f.write("-" * 80 + "\n")
-        f.write(f"{'#':<5} {'TIPO':<20} {'VALOR':<30} {'LÍNEA':<10}\n")
-        f.write("-" * 80 + "\n")
-        
-        for i, tok in enumerate(tokens_encontrados, 1):
-            valor_str = str(tok.value)
-            if len(valor_str) > 27:
-                valor_str = valor_str[:27] + "..."
-            f.write(f"{i:<5} {tok.type:<20} {valor_str:<30} {tok.lineno:<10}\n")
-        
-        if errores:
-            f.write("\n" + "=" * 80 + "\n")
-            f.write(f"ERRORES ENCONTRADOS: {len(errores)}\n")
-            f.write("-" * 80 + "\n")
-            for error in errores:
-                f.write(f"• {error}\n")
-        else:
-            f.write("\n" + "=" * 80 + "\n")
-            f.write("✓ ANÁLISIS COMPLETADO SIN ERRORES LÉXICOS\n")
-        
-        f.write("=" * 80 + "\n")
-        f.write("FIN DEL ANÁLISIS\n")
-        f.write("=" * 80 + "\n")
-    
-    return nombre_log
-
-# ============================================================
-# FUNCIÓN PRINCIPAL DE ANÁLISIS
-# ============================================================
-
-def analizar_archivo(ruta_archivo, integrante, usuario_git='LockHurb'):
-
-    print("\n" + "=" * 80)
-    print(f"ANALIZADOR LÉXICO - PHP")
-    print(f"Integrante: {integrante}")
-    print(f"Archivo: {ruta_archivo}")
-    print(f"Usuario: {usuario_git}")
-    print("=" * 80 + "\n")
-    
-    # Leer el archivo
-    try:
-        with open(ruta_archivo, 'r', encoding='utf-8') as f:
-            codigo = f.read()
-    except FileNotFoundError:
-        print(f"Error: No se encontró el archivo '{ruta_archivo}'")
-        return []
-    except Exception as e:
-        print(f"Error al leer el archivo: {e}")
-        return []
-    
-    # Analizar el código
-    lexer_local = lex.lex() 
-    lexer_local.input(codigo)
-    tokens_encontrados = []
-    errores = []
-    
-    print("Procesando tokens...\n")
-    print(f"{'TIPO':<20} {'VALOR':<35} {'LÍNEA':<10}")
-    print("-" * 80)
-    
-    while True:
-        tok = lexer_local.token()
-        if not tok:
-            break
-        
-        # Verificar que tok sea un objeto token válido
-        if hasattr(tok, 'type') and hasattr(tok, 'value'):
-            tokens_encontrados.append(tok)
-            
-            # Mostrar el token en consola
-            valor_str = str(tok.value)
-            if len(valor_str) > 32:
-                valor_str = valor_str[:32] + "..."
-            print(f"{tok.type:<20} {valor_str:<35} {tok.lineno:<10}")
-    
-    print("\n" + "=" * 80)
-    print(f"RESUMEN DEL ANÁLISIS")
-    print("-" * 80)
-    print(f"Total de tokens reconocidos: {len(tokens_encontrados)}")
-    print(f"Total de errores léxicos: {len(errores)}")
-    
-    # Generar log
-    nombre_log = generar_log(codigo, integrante, tokens_encontrados, errores, usuario_git)
-    print(f"\n✓ Log generado exitosamente: logs/{nombre_log}")
-    print("=" * 80 + "\n")
-    
-    return tokens_encontrados
-
-
-# ============================================================
-# PROGRAMA PRINCIPAL
-# ============================================================
-
-if __name__ == '__main__':
-    usuarios_info = [
-        ('tests/algoritmo_andres.php', 'Andrés Salazar', 'AndresSalazar19'),
-        ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez'),
-        ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb')
-    ]
-
-    if len(sys.argv) > 1:
-        archivo = sys.argv[1]
-        archivo = 'tests/' + archivo if not archivo.startswith('tests/') else archivo
-        # Determinar el usuario según el nombre del archivo
-        if 'andres' in archivo.lower():
-            nombre = 'Andrés Salazar'
-            usuario = 'AndresSalazar19'
-        elif 'yadira' in archivo.lower():
-            nombre = 'Yadira Suárez'
-            usuario = 'YadiSuarez'
-        elif 'zahid' in archivo.lower():
-            nombre = 'Zahid Díaz'
-            usuario = 'LockHurb'
-        else:
-            nombre = 'Desconocido'
-            usuario = 'UsuarioGit'
-    else:
-        # Si no se pasa argumento, usar el primero por defecto
-        archivo, nombre, usuario = usuarios_info[1]
-        
-    print("Ejecutando análisis con archivo")
-    print(f"   Archivo: {archivo}")
-    print(f"   Usuario: {usuario}\n")
-
-    analizar_archivo(archivo, nombre, usuario)
